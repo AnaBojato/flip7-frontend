@@ -1,0 +1,405 @@
+@import url("https://fonts.googleapis.com/css2?family=Anton&family=Hanken+Grotesk:wght@400;700&display=swap");
+
+/* =========================
+   GLOBAL
+========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Hanken Grotesk", sans-serif;
+  background-color: #171305;
+  overflow: hidden;
+}
+
+/* =========================
+   MAIN CONTAINER
+========================= */
+
+.main-menu {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: #ebe2c8;
+}
+
+/* =========================
+   BACKGROUND
+========================= */
+
+.background-overlay {
+  position: absolute;
+  inset: 0;
+
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgba(23, 19, 5, 0.4),
+      rgba(23, 19, 5, 0.8)
+    ),
+    url("https://lh3.googleusercontent.com/aida/ADBb0ugm8KXaZYuc1vEWie3OPdL-NA6msSYwxJu5mpAjTCHc1awICPdH-6vfzwS_BMpwD46_Xgcn0IKbfcy7TrlIeN1Uv1lykEGZ9eBxdabDNIkcuNJBfFHuqeRizIt3aop6gzAr1aSASM-KSurzXUd6kD9GHCSEfJSMCWO7Sbr30kVeBBxvxjbDVnoiSuYZKFc2_Y-2c_Gizz48Ub_Gaglxe_Zu98Gdc4s3aPJtT8_aTGSOhhZiLs6NNrGmRw");
+
+  background-size: cover;
+  background-position: center;
+
+  z-index: 1;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.menu-container {
+  position: relative;
+  z-index: 10;
+
+  width: 100%;
+  max-width: 500px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* =========================
+   TITLE
+========================= */
+
+.title-section {
+  margin-bottom: 60px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-title {
+  font-family: "Anton", sans-serif;
+  font-size: 90px;
+  letter-spacing: 6px;
+  color: #f8f3e6;
+
+  text-shadow:
+    0 0 10px #d62828,
+    0 0 20px #d62828,
+    0 0 30px #d62828;
+}
+
+.subtitle-container {
+  margin-top: 10px;
+
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.line {
+  width: 90px;
+  height: 2px;
+
+  background: linear-gradient(
+    to right,
+    transparent,
+    #e9c349
+  );
+}
+
+.game-subtitle {
+  font-size: 15px;
+  letter-spacing: 6px;
+  color: #e9c349;
+  font-weight: 700;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.actions-container {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.parchment-button {
+  background: linear-gradient(
+    135deg,
+    #f2e3b3 0%,
+    #d4c28d 100%
+  );
+
+  border: 2px solid #574500;
+
+  box-shadow:
+    inset 0 0 10px rgba(0, 0, 0, 0.2),
+    0 4px 15px rgba(0, 0, 0, 0.4);
+
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease;
+
+  cursor: pointer;
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+.parchment-button::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+
+  background-size: 200% 100%;
+
+  animation: shimmer 4s linear infinite;
+}
+
+.parchment-button:hover {
+  transform: scale(1.03);
+  filter: brightness(1.05);
+}
+
+.parchment-button:active {
+  transform: scale(0.97);
+}
+
+/* =========================
+   PRIMARY BUTTON
+========================= */
+
+.primary-button {
+  width: 100%;
+
+  padding: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
+  border-radius: 12px;
+}
+
+.button-icon {
+  font-size: 30px;
+  color: #342800;
+}
+
+.button-text {
+  font-family: "Anton", sans-serif;
+  font-size: 40px;
+  color: #342800;
+  letter-spacing: 2px;
+}
+
+/* =========================
+   SECONDARY BUTTONS
+========================= */
+
+.secondary-buttons {
+  width: 100%;
+
+  display: flex;
+  gap: 20px;
+}
+
+.secondary-button {
+  flex: 1;
+
+  padding: 24px 10px;
+
+  border-radius: 12px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+}
+
+.secondary-icon {
+  font-size: 30px;
+  color: #342800;
+}
+
+.secondary-text {
+  font-family: "Anton", sans-serif;
+  font-size: 22px;
+  line-height: 26px;
+  text-align: center;
+  color: #342800;
+  letter-spacing: 1px;
+}
+
+/* =========================
+   DECORATIONS
+========================= */
+
+.compass-decoration {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+
+  opacity: 0.5;
+
+  z-index: 5;
+}
+
+.compass-circle {
+  width: 120px;
+  height: 120px;
+
+  border: 4px solid rgba(233, 195, 73, 0.4);
+  border-radius: 50%;
+
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.compass-inner-circle {
+  position: absolute;
+
+  width: 100%;
+  height: 100%;
+
+  border: 1px dashed rgba(233, 195, 73, 0.3);
+  border-radius: 50%;
+
+  animation: spin 20s linear infinite;
+}
+
+.compass-icon {
+  font-size: 50px;
+  color: #e9c349;
+
+  transform: rotate(45deg);
+}
+
+.north-letter {
+  position: absolute;
+  top: -22px;
+
+  font-size: 14px;
+  color: #e9c349;
+}
+
+.coins-decoration {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+
+  display: flex;
+  gap: 8px;
+
+  z-index: 5;
+}
+
+.coin {
+  border-radius: 50%;
+
+  background-color: #e9c349;
+
+  border: 2px solid #574500;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-family: "Anton", sans-serif;
+  color: #241a00;
+
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+.large-coin {
+  width: 42px;
+  height: 42px;
+
+  animation: flicker 0.3s infinite alternate;
+}
+
+.small-coin {
+  width: 34px;
+  height: 34px;
+
+  margin-top: 8px;
+
+  opacity: 0.8;
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+.floating {
+  animation: floating 6s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
