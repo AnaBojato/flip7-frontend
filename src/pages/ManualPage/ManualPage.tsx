@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 
-import ManualSection from "../../components/manual/ManualSection";
-import RuleCard from "../../components/manual/RuleCard";
+import ManualSection from "../../components/ManualSection/ManualSection";
+import RuleCard from "../../components/RuleCard/RuleCard";
 
-import "../../components/manual/manual.css";
+import "./manualPage.css";
 import { ArrowLeft } from "lucide-react";
 
 function ManualPage() {

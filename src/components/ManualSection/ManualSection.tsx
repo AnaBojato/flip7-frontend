@@ -1,3 +1,5 @@
+import "./manualSection.css";
+
 type ManualSectionProps = {
   title: string;
   children: React.ReactNode;

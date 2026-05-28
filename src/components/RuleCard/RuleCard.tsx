@@ -1,3 +1,5 @@
+import "./ruleCard.css";
+
 type RuleCardProps = {
   title: string;
   description: string;

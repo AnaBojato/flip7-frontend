@@ -6,8 +6,15 @@ import ManualPage from "./pages/ManualPage/ManualPage";
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<MainMenu />} />
-      <Route path="/manual" element={<ManualPage />} />
+      <Route
+        path="/"
+        element={<MainMenu />}
+      />
+
+      <Route
+        path="/manual"
+        element={<ManualPage />}
+      />
     </Routes>
   );
 }

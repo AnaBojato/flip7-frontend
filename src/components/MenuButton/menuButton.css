@@ -1,0 +1,171 @@
+.menu-button {
+  position: relative;
+
+  border: none;
+  outline: none;
+  cursor: pointer;
+
+  overflow: hidden;
+
+  border-radius: 18px;
+
+  border: 1px solid rgba(233, 195, 73, 0.3);
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(18, 18, 18, 0.5),
+      rgba(10, 10, 10, 0.82)
+    );
+
+  backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+.menu-button:hover {
+  transform: translateY(-3px);
+
+  border-color: rgba(233, 195, 73, 0.75);
+
+  box-shadow:
+    0 0 20px rgba(233, 195, 73, 0.15),
+    0 10px 35px rgba(0, 0, 0, 0.5);
+}
+
+.menu-button:active {
+  transform: scale(0.98);
+}
+
+.menu-button-overlay {
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      120deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.08) 50%,
+      transparent 80%
+    );
+
+  transform: translateX(-120%);
+  transition: transform 0.8s ease;
+}
+
+.menu-button:hover .menu-button-overlay {
+  transform: translateX(120%);
+}
+
+/* =========================
+   PRIMARY BUTTON
+========================= */
+
+.primary-button {
+  width: 100%;
+
+  min-height: 110px;
+
+  padding: 24px 30px;
+}
+
+.primary-text {
+  position: relative;
+  z-index: 2;
+
+  font-family: "Anton", sans-serif;
+
+  font-size: 38px;
+  letter-spacing: 2px;
+
+  color: #e9c349;
+
+  text-shadow:
+    0 0 10px rgba(233, 195, 73, 0.25),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* =========================
+   SECONDARY BUTTONS
+========================= */
+
+.secondary-button {
+  flex: 1;
+
+  min-height: 150px;
+
+  padding: 24px 16px;
+
+  flex-direction: column;
+}
+
+.secondary-text {
+  position: relative;
+  z-index: 2;
+
+  font-family: "Anton", sans-serif;
+
+  font-size: 22px;
+  line-height: 26px;
+
+  text-align: center;
+  letter-spacing: 1px;
+
+  color: #e9c349;
+
+  text-shadow:
+    0 0 8px rgba(233, 195, 73, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* =========================
+   ICONS
+========================= */
+
+.menu-icon {
+  position: relative;
+  z-index: 2;
+
+  color: #e9c349;
+
+  flex-shrink: 0;
+
+  filter: drop-shadow(
+    0 0 8px rgba(233, 195, 73, 0.35)
+  );
+
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease;
+}
+
+.primary-button .menu-icon {
+  width: 36px;
+  height: 36px;
+}
+
+.secondary-button .menu-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.menu-button:hover .menu-icon {
+  transform: scale(1.12) rotate(-4deg);
+
+  filter: drop-shadow(
+    0 0 12px rgba(233, 195, 73, 0.55)
+  );
+}

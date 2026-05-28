@@ -13,7 +13,6 @@
 body {
   font-family: "Hanken Grotesk", sans-serif;
   background-color: #171305;
-
   overflow-x: hidden;
 }
 
@@ -23,8 +22,10 @@ body {
 
 .main-menu {
   position: relative;
+
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
+
   overflow: hidden;
 
   display: flex;
@@ -45,8 +46,8 @@ body {
   background-image:
     linear-gradient(
       to bottom,
-      rgba(23, 19, 5, 0.4),
-      rgba(23, 19, 5, 0.8)
+      rgba(23, 19, 5, 0.45),
+      rgba(23, 19, 5, 0.88)
     ),
     url("../../assets/images/backgrounds/luffy.jpg");
 
@@ -65,13 +66,13 @@ body {
   z-index: 10;
 
   width: 100%;
-  max-width: 520px;
+  max-width: 560px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
 
-  margin-top: -40px;
+  padding: 20px;
 }
 
 /* =========================
@@ -88,14 +89,15 @@ body {
 
 .game-title {
   font-family: "Anton", sans-serif;
-  font-size: 90px;
+
+  font-size: 96px;
   letter-spacing: 6px;
+
   color: #f8f3e6;
 
   text-shadow:
-    0 0 10px #5A3D23,
-    0 0 20px #5A3D23,
-    0 0 30px #5A3D23;
+    0 0 12px rgba(90, 61, 35, 0.7),
+    0 0 28px rgba(90, 61, 35, 0.45);
 }
 
 .subtitle-container {
@@ -120,9 +122,10 @@ body {
 .game-subtitle {
   font-size: 15px;
   letter-spacing: 6px;
+
   color: #e9c349;
   font-weight: 700;
-  text-align: center;
+
   white-space: nowrap;
 }
 
@@ -138,171 +141,11 @@ body {
   gap: 18px;
 }
 
-.parchment-button {
-  position: relative;
-
-  border-radius: 16px;
-
-  border: 1px solid rgba(233, 195, 73, 0.45);
-
-  background:
-    linear-gradient(
-      to bottom,
-      rgba(10, 10, 10, 0.35),
-      rgba(10, 10, 10, 0.6)
-    );
-
-  backdrop-filter: blur(5px);
-
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-
-  overflow: hidden;
-
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.parchment-button::before {
-  content: "";
-
-  position: absolute;
-  inset: 0;
-
-  background:
-    linear-gradient(
-      120deg,
-      transparent 20%,
-      rgba(255, 255, 255, 0.06) 50%,
-      transparent 80%
-    );
-
-  transform: translateX(-100%);
-
-  transition: transform 0.6s ease;
-}
-
-.parchment-button:hover::before {
-  transform: translateX(100%);
-}
-
-.parchment-button:hover {
-  transform: translateY(-2px);
-
-  border-color: rgba(233, 195, 73, 0.9);
-
-  background:
-    linear-gradient(
-      to bottom,
-      rgba(20, 20, 20, 0.45),
-      rgba(20, 20, 20, 0.75)
-    );
-
-  box-shadow:
-    0 10px 28px rgba(0, 0, 0, 0.45),
-    0 0 14px rgba(233, 195, 73, 0.18);
-}
-
-.parchment-button:active {
-  transform: scale(0.98);
-}
-
-/* =========================
-   PRIMARY BUTTON
-========================= */
-
-.primary-button {
-  width: 100%;
-
-  height: 86px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 14px;
-}
-
-.primary-text {
-  font-family: "Anton", sans-serif;
-
-  font-size: 42px;
-  letter-spacing: 1px;
-
-  color: #d7b24c;
-
-  text-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.5);
-}
-
-/* =========================
-   ICONS
-========================= */
-
-.menu-icon {
-  width: 32px;
-  height: 32px;
-
-  color: #d7b24c;
-
-  flex-shrink: 0;
-
-  transition:
-    transform 0.2s ease,
-    color 0.2s ease;
-}
-
-.parchment-button:hover .menu-icon {
-  transform: scale(1.12);
-}
-
-/* =========================
-   SECONDARY BUTTONS
-========================= */
-
 .secondary-buttons {
   width: 100%;
 
   display: flex;
   gap: 18px;
-}
-
-.secondary-button {
-  flex: 1;
-
-  height: 120px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  gap: 10px;
-}
-
-.secondary-button .menu-icon {
-  width: 26px;
-  height: 26px;
-}
-
-.secondary-text {
-  font-family: "Anton", sans-serif;
-
-  font-size: 22px;
-  line-height: 22px;
-
-  text-align: center;
-
-  color: #d7b24c;
-
-  letter-spacing: 1px;
-
-  text-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.45);
 }
 
 /* =========================
@@ -311,22 +154,23 @@ body {
 
 .compass-decoration {
   position: absolute;
+
   bottom: 40px;
   left: 40px;
 
-  opacity: 0.5;
+  opacity: 0.55;
 
   z-index: 5;
 }
 
 .compass-circle {
+  position: relative;
+
   width: 120px;
   height: 120px;
 
-  border: 4px solid rgba(233, 195, 73, 0.4);
   border-radius: 50%;
-
-  position: relative;
+  border: 4px solid rgba(233, 195, 73, 0.35);
 
   display: flex;
   justify-content: center;
@@ -339,8 +183,8 @@ body {
   width: 100%;
   height: 100%;
 
-  border: 1px dashed rgba(233, 195, 73, 0.3);
   border-radius: 50%;
+  border: 1px dashed rgba(233, 195, 73, 0.25);
 
   animation: spin 20s linear infinite;
 }
@@ -350,60 +194,62 @@ body {
 
   transform: rotate(45deg);
 
-  filter: drop-shadow(0 0 8px rgba(233, 195, 73, 0.5));
+  filter: drop-shadow(
+    0 0 10px rgba(233, 195, 73, 0.5)
+  );
+}
+
+.north-letter,
+.east-letter,
+.south-letter,
+.west-letter {
+  position: absolute;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  color: #e9c349;
 }
 
 .north-letter {
-  position: absolute;
   top: -22px;
   left: 50%;
 
   transform: translateX(-50%);
-
-  font-size: 14px;
-  color: #e9c349;
 }
 
 .east-letter {
-  position: absolute;
   top: 50%;
   right: -22px;
 
   transform: translateY(-50%);
-
-  font-size: 14px;
-  color: #e9c349;
 }
 
 .south-letter {
-  position: absolute;
   bottom: -22px;
   left: 50%;
 
   transform: translateX(-50%);
-
-  font-size: 14px;
-  color: #e9c349;
 }
 
 .west-letter {
-  position: absolute;
   top: 50%;
   left: -22px;
 
   transform: translateY(-50%);
-
-  font-size: 14px;
-  color: #e9c349;
 }
 
 /* =========================
-   ANIMATIONS
+   FLOATING
 ========================= */
 
 .floating {
   animation: floating 6s ease-in-out infinite;
 }
+
+/* =========================
+   ANIMATIONS
+========================= */
 
 @keyframes floating {
   0% {
@@ -419,16 +265,6 @@ body {
   }
 }
 
-@keyframes flicker {
-  0% {
-    opacity: 0.8;
-  }
-
-  100% {
-    opacity: 1;
-  }
-}
-
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -436,5 +272,36 @@ body {
 
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+  .menu-container {
+    max-width: 95%;
+  }
+
+  .game-title {
+    font-size: 72px;
+  }
+
+  .secondary-buttons {
+    flex-direction: column;
+  }
+
+  .compass-decoration {
+    display: none;
+  }
+
+  .line {
+    width: 50px;
+  }
+
+  .game-subtitle {
+    font-size: 12px;
+    letter-spacing: 4px;
   }
 }

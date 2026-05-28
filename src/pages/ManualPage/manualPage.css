@@ -15,11 +15,13 @@
   background-position: center;
 
   color: #ebe2c8;
+
   overflow-y: auto;
 }
 
 .manual-container {
   max-width: 1200px;
+
   margin: 0 auto;
 }
 
@@ -41,56 +43,6 @@
   font-size: 18px;
 
   margin-bottom: 60px;
-}
-
-.manual-section {
-  margin-bottom: 48px;
-}
-
-.manual-section-title {
-  font-family: "Anton", sans-serif;
-
-  font-size: 34px;
-
-  color: #d7b24c;
-
-  margin-bottom: 20px;
-
-  letter-spacing: 2px;
-}
-
-.manual-section-content {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-
-  font-size: 18px;
-
-  line-height: 1.8;
-}
-
-.rule-card {
-  background: rgba(20, 20, 20, 0.6);
-
-  border: 1px solid rgba(233, 195, 73, 0.25);
-
-  border-radius: 14px;
-
-  padding: 24px;
-
-  backdrop-filter: blur(4px);
-}
-
-.rule-card h3 {
-  color: #d7b24c;
-
-  margin-bottom: 10px;
-
-  font-size: 24px;
-}
-
-.rule-card p {
-  color: #ebe2c8;
 }
 
 .manual-back-button {

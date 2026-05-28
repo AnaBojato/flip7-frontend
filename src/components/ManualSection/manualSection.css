@@ -1,0 +1,26 @@
+.manual-section {
+  margin-bottom: 48px;
+}
+
+.manual-section-title {
+  font-family: "Anton", sans-serif;
+
+  font-size: 34px;
+
+  color: #d7b24c;
+
+  margin-bottom: 20px;
+
+  letter-spacing: 2px;
+}
+
+.manual-section-content {
+  display: flex;
+  flex-direction: column;
+
+  gap: 18px;
+
+  font-size: 18px;
+
+  line-height: 1.8;
+}

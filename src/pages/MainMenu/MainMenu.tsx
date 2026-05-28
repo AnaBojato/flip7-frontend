@@ -1,13 +1,12 @@
 import "./mainMenu.css";
 import { useNavigate } from "react-router-dom";
 
-import MenuButton from "../../components/ui/MenuButton";
+import MenuButton from "../../components/MenuButton/MenuButton";
 
 import {
   Compass,
   BookOpen,
   ScrollText,
-  Coins
 } from "lucide-react";
 
 const MainMenu = () => {

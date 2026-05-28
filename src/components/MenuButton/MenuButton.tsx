@@ -1,3 +1,5 @@
+import "./menuButton.css";
+
 import type { LucideIcon } from "lucide-react";
 
 interface MenuButtonProps {
@@ -7,18 +9,20 @@ interface MenuButtonProps {
   onClick?: () => void;
 }
 
-const MenuButton = ({
+function MenuButton({
   text,
   icon: Icon,
   variant = "primary",
-  onClick
-}: MenuButtonProps) => {
+  onClick,
+}: MenuButtonProps) {
   return (
     <button
-      className={`parchment-button ${variant}-button`}
+      className={`menu-button ${variant}-button`}
       onClick={onClick}
       type="button"
     >
+      <div className="menu-button-overlay"></div>
+
       <Icon className="menu-icon" />
 
       <span className={`${variant}-text`}>
@@ -26,6 +30,6 @@ const MenuButton = ({
       </span>
     </button>
   );
-};
+}
 
 export default MenuButton;
