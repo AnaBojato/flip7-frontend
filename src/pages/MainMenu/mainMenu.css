@@ -13,7 +13,8 @@
 body {
   font-family: "Hanken Grotesk", sans-serif;
   background-color: #171305;
-  overflow: hidden;
+
+  overflow-x: hidden;
 }
 
 /* =========================

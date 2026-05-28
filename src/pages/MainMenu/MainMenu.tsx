@@ -1,4 +1,5 @@
 import "./mainMenu.css";
+import { useNavigate } from "react-router-dom";
 
 import MenuButton from "../../components/ui/MenuButton";
 
@@ -10,6 +11,7 @@ import {
 } from "lucide-react";
 
 const MainMenu = () => {
+  const navigate = useNavigate();
   const handleNewGame = (): void => {
     console.log("Start new game");
   };
@@ -65,7 +67,7 @@ const MainMenu = () => {
               text="MANUAL"
               icon={BookOpen}
               variant="secondary"
-              onClick={handleManual}
+              onClick={() => navigate("/manual")}
             />
           </div>
         </div>
