@@ -1,4 +1,13 @@
-import "./MainMenu.css";
+import "./mainMenu.css";
+
+import MenuButton from "../../components/ui/MenuButton";
+
+import {
+  Compass,
+  BookOpen,
+  ScrollText,
+  Coins
+} from "lucide-react";
 
 const MainMenu = () => {
   const handleNewGame = (): void => {
@@ -20,7 +29,9 @@ const MainMenu = () => {
       <section className="menu-container">
         {/* TITLE */}
         <div className="title-section floating">
-          <h1 className="game-title">FLIP7</h1>
+          <h1 className="game-title">
+            FLIP7
+          </h1>
 
           <div className="subtitle-container">
             <div className="line"></div>
@@ -33,66 +44,48 @@ const MainMenu = () => {
           </div>
         </div>
 
-        {/* MAIN ACTIONS */}
+        {/* ACTIONS */}
         <div className="actions-container">
-          <button
-            className="primary-button parchment-button"
+          <MenuButton
+            text="NEW JOURNEY"
+            icon={Compass}
+            variant="primary"
             onClick={handleNewGame}
-            type="button"
-          >
-            <span className="button-icon">◎</span>
-
-            <span className="button-text">
-              NEW JOURNEY
-            </span>
-          </button>
+          />
 
           <div className="secondary-buttons">
-            <button
-              className="secondary-button parchment-button"
+            <MenuButton
+              text="MARINE ARCHIVES"
+              icon={ScrollText}
+              variant="secondary"
               onClick={handleArchives}
-              type="button"
-            >
-              <span className="secondary-icon">☰</span>
+            />
 
-              <span className="secondary-text">
-                MARINE
-                <br />
-                ARCHIVES
-              </span>
-            </button>
-
-            <button
-              className="secondary-button parchment-button"
+            <MenuButton
+              text="MANUAL"
+              icon={BookOpen}
+              variant="secondary"
               onClick={handleManual}
-              type="button"
-            >
-              <span className="secondary-icon">☷</span>
-
-              <span className="secondary-text">
-                MANUAL
-              </span>
-            </button>
+            />
           </div>
         </div>
       </section>
 
-      {/* DECORATION */}
+      {/* DECORATIONS */}
       <div className="compass-decoration">
         <div className="compass-circle">
-          <div className="compass-inner-circle"></div>
+  <div className="compass-inner-circle"></div>
 
-          <span className="compass-icon">
-            ▲
-          </span>
+  <Compass
+    className="compass-icon-svg"
+    size={52}
+  />
 
-          <span className="north-letter">N</span>
-        </div>
-      </div>
-
-      <div className="coins-decoration">
-        <div className="coin large-coin">B</div>
-        <div className="coin small-coin">B</div>
+  <span className="north-letter">N</span>
+  <span className="east-letter">E</span>
+  <span className="south-letter">S</span>
+  <span className="west-letter">W</span>
+</div>
       </div>
     </main>
   );

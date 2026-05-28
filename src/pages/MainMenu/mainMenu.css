@@ -47,7 +47,7 @@ body {
       rgba(23, 19, 5, 0.4),
       rgba(23, 19, 5, 0.8)
     ),
-    url("https://lh3.googleusercontent.com/aida/ADBb0ugm8KXaZYuc1vEWie3OPdL-NA6msSYwxJu5mpAjTCHc1awICPdH-6vfzwS_BMpwD46_Xgcn0IKbfcy7TrlIeN1Uv1lykEGZ9eBxdabDNIkcuNJBfFHuqeRizIt3aop6gzAr1aSASM-KSurzXUd6kD9GHCSEfJSMCWO7Sbr30kVeBBxvxjbDVnoiSuYZKFc2_Y-2c_Gizz48Ub_Gaglxe_Zu98Gdc4s3aPJtT8_aTGSOhhZiLs6NNrGmRw");
+    url("../../assets/images/backgrounds/luffy.jpg");
 
   background-size: cover;
   background-position: center;
@@ -64,11 +64,13 @@ body {
   z-index: 10;
 
   width: 100%;
-  max-width: 500px;
+  max-width: 520px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  margin-top: -40px;
 }
 
 /* =========================
@@ -90,9 +92,9 @@ body {
   color: #f8f3e6;
 
   text-shadow:
-    0 0 10px #d62828,
-    0 0 20px #d62828,
-    0 0 30px #d62828;
+    0 0 10px #5A3D23,
+    0 0 20px #5A3D23,
+    0 0 30px #5A3D23;
 }
 
 .subtitle-container {
@@ -119,6 +121,8 @@ body {
   letter-spacing: 6px;
   color: #e9c349;
   font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
 }
 
 /* =========================
@@ -130,58 +134,80 @@ body {
 
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
 .parchment-button {
-  background: linear-gradient(
-    135deg,
-    #f2e3b3 0%,
-    #d4c28d 100%
-  );
+  position: relative;
 
-  border: 2px solid #574500;
+  border-radius: 16px;
+
+  border: 1px solid rgba(233, 195, 73, 0.45);
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(10, 10, 10, 0.35),
+      rgba(10, 10, 10, 0.6)
+    );
+
+  backdrop-filter: blur(5px);
 
   box-shadow:
-    inset 0 0 10px rgba(0, 0, 0, 0.2),
-    0 4px 15px rgba(0, 0, 0, 0.4);
+    0 8px 24px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  overflow: hidden;
 
   transition:
     transform 0.2s ease,
-    filter 0.2s ease;
-
-  cursor: pointer;
-
-  position: relative;
-
-  overflow: hidden;
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.parchment-button::after {
+.parchment-button::before {
   content: "";
 
   position: absolute;
   inset: 0;
 
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
+  background:
+    linear-gradient(
+      120deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.06) 50%,
+      transparent 80%
+    );
 
-  background-size: 200% 100%;
+  transform: translateX(-100%);
 
-  animation: shimmer 4s linear infinite;
+  transition: transform 0.6s ease;
+}
+
+.parchment-button:hover::before {
+  transform: translateX(100%);
 }
 
 .parchment-button:hover {
-  transform: scale(1.03);
-  filter: brightness(1.05);
+  transform: translateY(-2px);
+
+  border-color: rgba(233, 195, 73, 0.9);
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(20, 20, 20, 0.45),
+      rgba(20, 20, 20, 0.75)
+    );
+
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.45),
+    0 0 14px rgba(233, 195, 73, 0.18);
 }
 
 .parchment-button:active {
-  transform: scale(0.97);
+  transform: scale(0.98);
 }
 
 /* =========================
@@ -191,26 +217,46 @@ body {
 .primary-button {
   width: 100%;
 
-  padding: 22px;
+  height: 86px;
 
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
 
-  border-radius: 12px;
+  gap: 14px;
 }
 
-.button-icon {
-  font-size: 30px;
-  color: #342800;
-}
-
-.button-text {
+.primary-text {
   font-family: "Anton", sans-serif;
-  font-size: 40px;
-  color: #342800;
-  letter-spacing: 2px;
+
+  font-size: 42px;
+  letter-spacing: 1px;
+
+  color: #d7b24c;
+
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* =========================
+   ICONS
+========================= */
+
+.menu-icon {
+  width: 32px;
+  height: 32px;
+
+  color: #d7b24c;
+
+  flex-shrink: 0;
+
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+
+.parchment-button:hover .menu-icon {
+  transform: scale(1.12);
 }
 
 /* =========================
@@ -221,15 +267,13 @@ body {
   width: 100%;
 
   display: flex;
-  gap: 20px;
+  gap: 18px;
 }
 
 .secondary-button {
   flex: 1;
 
-  padding: 24px 10px;
-
-  border-radius: 12px;
+  height: 120px;
 
   display: flex;
   flex-direction: column;
@@ -239,18 +283,25 @@ body {
   gap: 10px;
 }
 
-.secondary-icon {
-  font-size: 30px;
-  color: #342800;
+.secondary-button .menu-icon {
+  width: 26px;
+  height: 26px;
 }
 
 .secondary-text {
   font-family: "Anton", sans-serif;
+
   font-size: 22px;
-  line-height: 26px;
+  line-height: 22px;
+
   text-align: center;
-  color: #342800;
+
+  color: #d7b24c;
+
   letter-spacing: 1px;
+
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.45);
 }
 
 /* =========================
@@ -293,63 +344,56 @@ body {
   animation: spin 20s linear infinite;
 }
 
-.compass-icon {
-  font-size: 50px;
+.compass-icon-svg {
   color: #e9c349;
 
   transform: rotate(45deg);
+
+  filter: drop-shadow(0 0 8px rgba(233, 195, 73, 0.5));
 }
 
 .north-letter {
   position: absolute;
   top: -22px;
+  left: 50%;
+
+  transform: translateX(-50%);
 
   font-size: 14px;
   color: #e9c349;
 }
 
-.coins-decoration {
+.east-letter {
   position: absolute;
-  top: 40px;
-  right: 40px;
+  top: 50%;
+  right: -22px;
 
-  display: flex;
-  gap: 8px;
+  transform: translateY(-50%);
 
-  z-index: 5;
+  font-size: 14px;
+  color: #e9c349;
 }
 
-.coin {
-  border-radius: 50%;
+.south-letter {
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
 
-  background-color: #e9c349;
+  transform: translateX(-50%);
 
-  border: 2px solid #574500;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  font-family: "Anton", sans-serif;
-  color: #241a00;
-
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  font-size: 14px;
+  color: #e9c349;
 }
 
-.large-coin {
-  width: 42px;
-  height: 42px;
+.west-letter {
+  position: absolute;
+  top: 50%;
+  left: -22px;
 
-  animation: flicker 0.3s infinite alternate;
-}
+  transform: translateY(-50%);
 
-.small-coin {
-  width: 34px;
-  height: 34px;
-
-  margin-top: 8px;
-
-  opacity: 0.8;
+  font-size: 14px;
+  color: #e9c349;
 }
 
 /* =========================
@@ -371,16 +415,6 @@ body {
 
   100% {
     transform: translateY(0px);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-
-  100% {
-    background-position: 200% 0;
   }
 }
 
