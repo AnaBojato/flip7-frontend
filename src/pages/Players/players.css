@@ -2,10 +2,6 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Anton&family=Hanken+Grotesk:wght@400;700&display=swap");
 
-/* =========================
-   GLOBAL
-========================= */
-
 * {
   margin: 0;
   padding: 0;
@@ -18,13 +14,8 @@ body {
   overflow: hidden;
 }
 
-/* =========================
-   PAGE
-========================= */
-
 .players-page {
   position: relative;
-
   width: 100%;
   height: 100vh;
 
@@ -32,16 +23,11 @@ body {
   justify-content: center;
   align-items: center;
 
-  padding: 18px;
+  padding: 12px;
 
   overflow: hidden;
-
   color: #ebe2c8;
 }
-
-/* =========================
-   BACKGROUND
-========================= */
 
 .background-overlay {
   position: absolute;
@@ -61,20 +47,16 @@ body {
   z-index: 1;
 }
 
-/* =========================
-   CONTAINER
-========================= */
-
 .players-container {
   position: relative;
   z-index: 10;
 
   width: 100%;
-  max-width: 1300px;
+  max-width: 1200px;
 
-  padding: 22px;
+  padding: 16px;
 
-  border-radius: 20px;
+  border-radius: 18px;
 
   border: 1px solid rgba(233, 195, 73, 0.2);
 
@@ -90,24 +72,24 @@ body {
   box-shadow:
     0 0 18px rgba(233, 195, 73, 0.08),
     0 10px 24px rgba(0, 0, 0, 0.45);
-}
 
-/* =========================
-   TITLE
-========================= */
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
 
 .players-title-section {
   display: flex;
   flex-direction: column;
   align-items: center;
 
-  margin-bottom: 22px;
+  margin-bottom: 12px;
 }
 
 .players-title {
   font-family: "Anton", sans-serif;
 
-  font-size: 42px;
+  font-size: 32px;
   letter-spacing: 2px;
 
   color: #e9c349;
@@ -120,10 +102,10 @@ body {
 }
 
 .title-line {
-  width: 100px;
+  width: 90px;
   height: 3px;
 
-  margin-top: 10px;
+  margin-top: 8px;
 
   border-radius: 999px;
 
@@ -133,25 +115,21 @@ body {
     0 0 10px rgba(233, 195, 73, 0.45);
 }
 
-/* =========================
-   SLIDER
-========================= */
-
 .slider-section {
-  max-width: 520px;
-
-  margin: 0 auto 26px auto;
+  max-width: 650px;
+  width: 100%;
+  margin: 0 auto 14px auto;
 }
 
 .slider-label {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 2px;
 
@@ -159,7 +137,7 @@ body {
 }
 
 .player-count {
-  padding: 3px 10px;
+  padding: 2px 8px;
 
   border-radius: 8px;
 
@@ -167,32 +145,28 @@ body {
 
   color: #ebe2c8;
 
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .slider-container {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .slider-number {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
 
   color: #e9c349;
 }
-
-/* =========================
-   MODERN SLIDER
-========================= */
 
 .player-slider {
   width: 100%;
 
   appearance: none;
 
-  height: 5px;
+  height: 7px;
 
   border-radius: 999px;
 
@@ -200,12 +174,16 @@ body {
     linear-gradient(
       to right,
       #e9c349,
-      rgba(255,255,255,0.2)
+      rgba(255,255,255,0.15)
     );
+
+  box-shadow:
+    inset 0 0 6px rgba(0,0,0,.5),
+    0 0 10px rgba(233,195,73,.15);
 
   outline: none;
 
-  transition: all 0.2s ease;
+  transition: all .2s ease;
 }
 
 .player-slider:hover {
@@ -215,59 +193,107 @@ body {
 .player-slider::-webkit-slider-thumb {
   appearance: none;
 
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
 
   border-radius: 50%;
 
-  background: #f3d16a;
+  background:
+    radial-gradient(
+      circle,
+      #fff0b5 0%,
+      #f3d16a 45%,
+      #d4a91d 100%
+    );
 
   border: 2px solid #241a00;
 
   cursor: pointer;
 
   transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
+    transform .15s ease,
+    box-shadow .15s ease;
 
   box-shadow:
-    0 0 10px rgba(233, 195, 73, 0.65);
+    0 0 14px rgba(233,195,73,.7);
 }
 
 .player-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.12);
+  transform: scale(1.15);
 
   box-shadow:
-    0 0 16px rgba(233, 195, 73, 0.95);
+    0 0 20px rgba(233,195,73,1);
 }
-
-/* =========================
-   GRID
-========================= */
 
 .players-grid {
+  flex: 1;
+
   display: grid;
 
-  grid-template-columns:
-    repeat(auto-fit, minmax(170px, 1fr));
+  grid-template-columns: repeat(5, 180px);
 
-  gap: 14px;
+  justify-content: center;
 
-  max-height: 52vh;
+  align-content: start;
 
-  overflow: hidden;
+  gap: 12px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding-right: 10px;
+  padding-bottom: 6px;
 }
 
-/* =========================
-   CARD
-========================= */
+.players-grid::-webkit-scrollbar {
+  width: 10px;
+}
+
+.players-grid::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.25);
+
+  border-radius: 999px;
+
+  border: 1px solid rgba(233, 195, 73, 0.08);
+}
+
+.players-grid::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      #f3d16a,
+      #c79d19
+    );
+
+  border: 2px solid rgba(20,20,20,.8);
+
+  box-shadow:
+    0 0 8px rgba(233,195,73,.35);
+}
+
+.players-grid::-webkit-scrollbar-thumb:hover {
+  background:
+    linear-gradient(
+      to bottom,
+      #ffd96d,
+      #e9c349
+    );
+
+  box-shadow:
+    0 0 14px rgba(233,195,73,.65);
+}
 
 .player-card {
+  width: 180px;
+  height: 140px;
+
   position: relative;
 
-  padding: 16px 14px;
+  padding: 12px 10px;
 
-  border-radius: 18px;
+  border-radius: 16px;
 
   overflow: hidden;
 
@@ -322,63 +348,37 @@ body {
 
   border: 1px solid rgba(233, 195, 73, 0.15);
 
-  border-radius: 14px;
+  border-radius: 12px;
 
   pointer-events: none;
 }
 
-/* =========================
-   CORNERS
-========================= */
-
 .corner {
   position: absolute;
 
-  font-size: 8px;
+  font-size: 7px;
 
   color: #e9c349;
 
   opacity: 0.7;
 }
 
-.top-left {
-  top: 5px;
-  left: 7px;
-}
-
-.top-right {
-  top: 5px;
-  right: 7px;
-}
-
-.bottom-left {
-  bottom: 5px;
-  left: 7px;
-}
-
-.bottom-right {
-  bottom: 5px;
-  right: 7px;
-}
-
-/* =========================
-   AVATAR
-========================= */
+.top-left { top: 5px; left: 7px; }
+.top-right { top: 5px; right: 7px; }
+.bottom-left { bottom: 5px; left: 7px; }
+.bottom-right { bottom: 5px; right: 7px; }
 
 .avatar-wrapper {
   position: relative;
-
   width: fit-content;
-
-  margin: 0 auto 14px auto;
+  margin: 0 auto 10px auto;
 }
 
 .avatar-container {
-  width: 68px;
-  height: 68px;
+  width: 58px;
+  height: 58px;
 
   border-radius: 50%;
-
   overflow: hidden;
 
   border: 2px solid rgba(233, 195, 73, 0.7);
@@ -386,65 +386,22 @@ body {
   background: #1e1e1e;
 
   box-shadow:
-    0 0 12px rgba(233, 195, 73, 0.2);
+    0 0 10px rgba(233, 195, 73, 0.2);
 }
 
 .avatar-image {
   width: 100%;
   height: 100%;
-
   object-fit: cover;
-}
-
-/* =========================
-   CHANGE AVATAR BUTTON
-========================= */
-
-.change-avatar-button {
-  position: absolute;
-
-  top: -2px;
-  right: -4px;
-
-  width: 22px;
-  height: 22px;
-
-  border-radius: 50%;
-
-  border: none;
-
-  background: #e9c349;
-
-  color: #241a00;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  cursor: pointer;
-
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
-
-  box-shadow:
-    0 0 10px rgba(233, 195, 73, 0.4);
-}
-
-.change-avatar-button:hover {
-  transform: scale(1.1);
-
-  box-shadow:
-    0 0 16px rgba(233, 195, 73, 0.7);
 }
 
 .player-number {
   position: absolute;
 
-  right: -6px;
+  right: -4px;
   bottom: -4px;
 
-  padding: 2px 7px;
+  padding: 2px 6px;
 
   border-radius: 999px;
 
@@ -452,19 +409,12 @@ body {
 
   color: #241a00;
 
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
-
-  box-shadow:
-    0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* =========================
-   INPUT
-========================= */
-
 .input-container {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .player-input {
@@ -475,19 +425,16 @@ body {
   border: none;
   border-bottom: 1px solid rgba(233, 195, 73, 0.28);
 
-  padding: 8px 4px;
+  padding: 5px 2px;
 
   text-align: center;
 
   color: #e9c349;
 
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 700;
 
   outline: none;
-
-  transition:
-    border-color 0.2s ease;
 }
 
 .player-input:focus {
@@ -498,37 +445,28 @@ body {
   color: rgba(233, 195, 73, 0.35);
 }
 
-/* =========================
-   ROLE
-========================= */
-
 .player-role {
   display: block;
 
   text-align: center;
 
-  font-size: 9px;
-  letter-spacing: 2px;
+  font-size: 8px;
+  letter-spacing: 1px;
 
   text-transform: uppercase;
 
   color: rgba(233, 195, 73, 0.55);
 }
 
-/* =========================
-   ACTIONS
-========================= */
-
 .players-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
 
-  margin-top: 20px;
-  padding-top: 16px;
+  margin-top: 14px;
+  padding-top: 12px;
 
-  border-top:
-    1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .back-button {
@@ -541,7 +479,7 @@ body {
 
   color: rgba(235, 226, 200, 0.7);
 
-  font-size: 13px;
+  font-size: 12px;
 
   cursor: pointer;
 
@@ -555,12 +493,12 @@ body {
 .sail-button {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 
-  padding: 12px 28px;
+  padding: 10px 22px;
 
   border: none;
-  border-radius: 14px;
+  border-radius: 12px;
 
   cursor: pointer;
 
@@ -570,68 +508,39 @@ body {
 
   font-family: "Anton", sans-serif;
 
-  font-size: 22px;
+  font-size: 18px;
   letter-spacing: 1px;
-
-  box-shadow:
-    0 8px 18px rgba(0, 0, 0, 0.35),
-    0 0 12px rgba(233, 195, 73, 0.15);
 
   transition:
     transform 0.2s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease;
+    background 0.2s ease;
 }
 
 .sail-button:hover {
   transform: scale(1.03);
-
   background: #e9c349;
-
-  box-shadow:
-    0 0 20px rgba(233, 195, 73, 0.35);
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media (max-width: 900px) {
-
-  body {
-    overflow-y: auto;
-  }
-
-  .players-page {
-    height: auto;
-    min-height: 100vh;
-  }
-
+@media (max-width: 1100px) {
   .players-grid {
-    overflow-y: auto;
-    max-height: unset;
+    grid-template-columns: repeat(4, 180px);
   }
-
 }
 
-@media (max-width: 768px) {
-
-  .players-container {
-    padding: 18px;
+@media (max-width: 850px) {
+  .players-grid {
+    grid-template-columns: repeat(3, 180px);
   }
+}
 
-  .players-title {
-    font-size: 30px;
+@media (max-width: 650px) {
+  .players-grid {
+    grid-template-columns: repeat(2, 180px);
   }
+}
 
-  .players-actions {
-    flex-direction: column;
-    gap: 14px;
+@media (max-width: 450px) {
+  .players-grid {
+    grid-template-columns: repeat(1, 180px);
   }
-
-  .sail-button {
-    width: 100%;
-    justify-content: center;
-  }
-
 }

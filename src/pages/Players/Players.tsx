@@ -1,15 +1,39 @@
-// Players.tsx
-
+import { useNavigate } from "react-router-dom";
 import "./players.css";
 import { useState } from "react";
 
 import {
   ArrowLeft,
-  Sailboat,
-  Plus
+  Sailboat
 } from "lucide-react";
 
+import img1 from "../../assets/characters/img1.jpg";
+import img2 from "../../assets/characters/img2.jpg";
+import img3 from "../../assets/characters/img3.jpg";
+import img4 from "../../assets/characters/img4.jpg";
+import img5 from "../../assets/characters/img5.jpg";
+import img6 from "../../assets/characters/img6.jpg";
+import img7 from "../../assets/characters/img7.jpg";
+import img8 from "../../assets/characters/img8.jpg";
+import img9 from "../../assets/characters/img9.jpg";
+import img10 from "../../assets/characters/img10.jpg";
+
+const characterImages = [
+  img1,
+  img2,
+  img3,
+  img4,
+  img5,
+  img6,
+  img7,
+  img8,
+  img9,
+  img10
+];
+
 const Players = () => {
+
+  const navigate = useNavigate();
 
   const [playerCount, setPlayerCount] =
     useState<number>(6);
@@ -18,27 +42,19 @@ const Players = () => {
     { length: playerCount },
     (_, index) => ({
       id: index + 1,
-      name:
-        index === 0
-          ? "Monkey D. Luffy"
-          : "",
-      role:
-        index === 0
-          ? "Captain"
-          : "Crew Member"
+      name: "",
+      role: "Crew Member",
+      avatar: characterImages[index]
     })
   );
 
   return (
     <main className="players-page">
 
-      {/* BACKGROUND */}
       <div className="background-overlay"></div>
 
-      {/* CONTENT */}
       <section className="players-container">
 
-        {/* TITLE */}
         <div className="players-title-section">
 
           <h1 className="players-title">
@@ -49,7 +65,6 @@ const Players = () => {
 
         </div>
 
-        {/* SLIDER */}
         <div className="slider-section">
 
           <label className="slider-label">
@@ -89,10 +104,9 @@ const Players = () => {
 
         </div>
 
-        {/* GRID */}
         <div className="players-grid">
 
-          {players.map((player, index) => (
+          {players.map((player) => (
 
             <div
               className="player-card"
@@ -117,25 +131,17 @@ const Players = () => {
                 ◈
               </span>
 
-              {/* AVATAR */}
               <div className="avatar-wrapper">
 
                 <div className="avatar-container">
 
                   <img
-                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=Pirate${index + 1}`}
-                    alt="Pirate Avatar"
+                    src={player.avatar}
+                    alt={`Player ${player.id}`}
                     className="avatar-image"
                   />
 
                 </div>
-
-                {/* CHANGE AVATAR BUTTON */}
-                <button className="change-avatar-button">
-
-                  <Plus size={14} />
-
-                </button>
 
                 <div className="player-number">
                   #{player.id}
@@ -143,23 +149,16 @@ const Players = () => {
 
               </div>
 
-              {/* INPUT */}
               <div className="input-container">
 
                 <input
                   type="text"
-                  defaultValue={player.name}
-                  placeholder={
-                    index === 0
-                      ? "Captain Name"
-                      : "Crewmate Name"
-                  }
+                  placeholder={`Player ${player.id}`}
                   className="player-input"
                 />
 
               </div>
 
-              {/* ROLE */}
               <span className="player-role">
                 {player.role}
               </span>
@@ -170,10 +169,12 @@ const Players = () => {
 
         </div>
 
-        {/* ACTIONS */}
         <div className="players-actions">
 
-          <button className="back-button">
+          <button
+            className="back-button"
+            onClick={() => navigate("/")}
+          >
 
             <ArrowLeft size={16} />
 
@@ -183,7 +184,10 @@ const Players = () => {
 
           </button>
 
-          <button className="sail-button">
+          <button
+            className="sail-button"
+            onClick={() => navigate("/game")}
+          >
 
             <span>
               SET SAIL

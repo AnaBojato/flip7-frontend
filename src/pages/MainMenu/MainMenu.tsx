@@ -12,7 +12,7 @@ import {
 const MainMenu = () => {
   const navigate = useNavigate();
   const handleNewGame = (): void => {
-    console.log("Start new game");
+    navigate("/players");
   };
 
   const handleArchives = (): void => {
