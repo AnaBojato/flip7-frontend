@@ -7,6 +7,8 @@ import {
   Sailboat
 } from "lucide-react";
 
+import { createGame } from "../../services/GameService";
+
 import img1 from "../../assets/characters/img1.jpg";
 import img2 from "../../assets/characters/img2.jpg";
 import img3 from "../../assets/characters/img3.jpg";
@@ -38,11 +40,53 @@ const Players = () => {
   const [playerCount, setPlayerCount] =
     useState<number>(6);
 
+  const [playerNames, setPlayerNames] =
+    useState<string[]>(Array(10).fill(""));
+
+  const handlePlayerNameChange = (
+    index: number,
+    value: string
+  ) => {
+    const updated = [...playerNames];
+    updated[index] = value;
+    setPlayerNames(updated);
+  };
+
+  const handleCreateGame = async () => {
+    try {
+
+      const names = playerNames
+        .slice(0, playerCount)
+        .map(name => name.trim());
+
+      const hasEmptyName = names.some(
+        name => name === ""
+      );
+
+      if (hasEmptyName) {
+        alert("All players must have a name");
+        return;
+      }
+
+      const game = await createGame(names);
+
+      navigate("/game", {
+        state: {
+          gameId: game.id
+        }
+      });
+
+    } catch (error) {
+      console.error(error);
+      alert("Error creating game");
+    }
+  };
+
   const players = Array.from(
     { length: playerCount },
     (_, index) => ({
       id: index + 1,
-      name: "",
+      name: playerNames[index],
       role: "Crew Member",
       avatar: characterImages[index]
     })
@@ -155,6 +199,13 @@ const Players = () => {
                   type="text"
                   placeholder={`Player ${player.id}`}
                   className="player-input"
+                  value={playerNames[player.id - 1]}
+                  onChange={(e) =>
+                    handlePlayerNameChange(
+                      player.id - 1,
+                      e.target.value
+                    )
+                  }
                 />
 
               </div>
@@ -186,7 +237,7 @@ const Players = () => {
 
           <button
             className="sail-button"
-            onClick={() => navigate("/game")}
+            onClick={handleCreateGame}
           >
 
             <span>
