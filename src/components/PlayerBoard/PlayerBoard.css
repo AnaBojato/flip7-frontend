@@ -1,0 +1,130 @@
+.player-board {
+
+  background: rgba(20, 20, 20, 0.9);
+
+  border: 2px solid #d4af37;
+
+  border-radius: 18px;
+
+  padding: 20px;
+
+  min-height: 220px;
+
+  box-shadow:
+    0 0 15px rgba(212, 175, 55, 0.25);
+
+}
+
+.player-header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 16px;
+
+}
+
+.player-header h3 {
+
+  margin: 0;
+
+  color: #f5d76e;
+
+}
+
+.player-score {
+
+  font-size: 1.2rem;
+
+  font-weight: bold;
+
+  color: white;
+
+}
+
+.player-status {
+
+  margin-bottom: 18px;
+
+}
+
+.status {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  font-size: 0.9rem;
+
+}
+
+.busted {
+
+  background: rgba(255, 0, 0, 0.2);
+
+  color: #ff8080;
+
+}
+
+.stood {
+
+  background: rgba(0, 100, 255, 0.2);
+
+  color: #8fc3ff;
+
+}
+
+.active {
+
+  background: rgba(0, 255, 100, 0.15);
+
+  color: #89ffb0;
+
+}
+
+.cards-container {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 10px;
+
+}
+
+.game-card {
+
+  width: 70px;
+
+  height: 100px;
+
+  border-radius: 12px;
+
+  background: white;
+
+  color: black;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  font-weight: bold;
+
+  font-size: 0.9rem;
+
+  text-align: center;
+
+  padding: 6px;
+
+}

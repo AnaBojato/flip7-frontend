@@ -1,21 +1,34 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import {
+  useEffect,
+  useState
+} from "react";
+
+import {
+  useLocation
+} from "react-router-dom";
 
 import {
   getPlayers,
   getRound
 } from "../../services/gameService";
 
-import "./gamePage.css";
+import PlayerBoard
+  from "../../components/PlayerBoard/PlayerBoard";
+
+import "./GamePage.css";
 
 export default function GamePage() {
 
   const location = useLocation();
 
-  const gameId = location.state?.gameId;
+  const gameId =
+    location.state?.gameId;
 
-  const [players, setPlayers] = useState<any[]>([]);
-  const [round, setRound] = useState<any>(null);
+  const [players, setPlayers] =
+    useState<any[]>([]);
+
+  const [round, setRound] =
+    useState<any>(null);
 
   useEffect(() => {
 
@@ -36,6 +49,7 @@ export default function GamePage() {
         await getRound(gameId);
 
       setPlayers(playersData);
+
       setRound(roundData);
 
     } catch (error) {
@@ -43,53 +57,47 @@ export default function GamePage() {
       console.error(error);
 
     }
+
   };
 
   return (
 
-    <main style={{ padding: "20px" }}>
+    <main className="game-page">
 
-      <h1>Flip 7</h1>
+      <div className="game-header">
 
-      <h2>Game #{gameId}</h2>
+        <h1>
+          Flip 7
+        </h1>
 
-      <h3>Players</h3>
+        <div className="game-info">
 
-      {players.map(player => (
+          <span>
+            Game #{gameId}
+          </span>
 
-        <div key={player.id}>
-
-          {player.name}
-          {" - "}
-          Score:
-          {" "}
-          {player.totalScore}
+          <span>
+            Round {round?.roundNumber}
+          </span>
 
         </div>
 
-      ))}
+      </div>
 
-      <hr />
+      <div className="players-grid">
 
-      <h3>Round Info</h3>
+        {round?.hands?.map(
+          (hand: any) => (
 
-      {round && (
+            <PlayerBoard
+              key={hand.player.id}
+              hand={hand}
+            />
 
-        <>
-          <p>
-            Round:
-            {" "}
-            {round.roundNumber}
-          </p>
+          )
+        )}
 
-          <p>
-            Status:
-            {" "}
-            {round.status}
-          </p>
-        </>
-
-      )}
+      </div>
 
     </main>
 
