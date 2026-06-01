@@ -21,6 +21,7 @@ import card12 from "../../assets/cards/normalCards/card12.svg";
 import freeze from "../../assets/cards/specialCards/freeze.svg";
 import flipThree from "../../assets/cards/specialCards/flipThree.svg";
 import secondChance from "../../assets/cards/specialCards/secondChance.svg";
+import multiple from "../../assets/cards/specialCards/multiplier.svg";
 
 function ManualPage() {
   const navigate = useNavigate();
@@ -287,6 +288,14 @@ function ManualPage() {
               description="
                 Allows one duplicated card
                 to be discarded safely.
+              "
+            />
+
+            <GameCard
+              image={multiple}
+              title="MULTIPLIER"
+              description="
+                Multiply the final score by two
               "
             />
 

@@ -7,7 +7,7 @@ import {
   Sailboat
 } from "lucide-react";
 
-import { createGame } from "../../services/GameService";
+import { createGame } from "../../services/gameService";
 
 import img1 from "../../assets/characters/img1.jpg";
 import img2 from "../../assets/characters/img2.jpg";

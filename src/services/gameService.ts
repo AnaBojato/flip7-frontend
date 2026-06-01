@@ -1,8 +1,6 @@
 const API_URL = "http://localhost:8080";
 
-export const createGame = async (
-  playerNames: string[]
-) => {
+export const createGame = async (playerNames: string[]) => {
   const response = await fetch(`${API_URL}/games`, {
     method: "POST",
     headers: {
@@ -15,6 +13,77 @@ export const createGame = async (
 
   if (!response.ok) {
     throw new Error("Failed to create game");
+  }
+
+  return response.json();
+};
+
+export const getPlayers = async (gameId: number) => {
+  const response = await fetch(`${API_URL}/games/${gameId}/players`);
+
+  if (!response.ok) {
+    throw new Error("Failed to get players");
+  }
+
+  return response.json();
+};
+
+export const getRound = async (gameId: number) => {
+  const response = await fetch(`${API_URL}/games/${gameId}/round`);
+
+  if (!response.ok) {
+    throw new Error("Failed to get round");
+  }
+
+  return response.json();
+};
+
+export const getPlayerHand = async (
+  gameId: number,
+  playerId: number
+) => {
+
+  const response = await fetch(
+    `${API_URL}/games/${gameId}/players/${playerId}/hand`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to get hand");
+  }
+
+  return response.json();
+};
+export const drawCard = async (
+  gameId: number,
+  playerId: number
+) => {
+  const response = await fetch(
+    `${API_URL}/games/${gameId}/players/${playerId}/draw`,
+    {
+      method: "POST",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to draw card");
+  }
+
+  return response.json();
+};
+
+export const standPlayer = async (
+  gameId: number,
+  playerId: number
+) => {
+  const response = await fetch(
+    `${API_URL}/games/${gameId}/players/${playerId}/stand`,
+    {
+      method: "POST",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to stand");
   }
 
   return response.json();

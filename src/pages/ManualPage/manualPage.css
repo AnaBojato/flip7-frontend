@@ -347,7 +347,7 @@ body,
   display: grid;
 
   grid-template-columns:
-    repeat(3, minmax(260px, 1fr));
+    repeat(4, minmax(260px, 1fr));
 
   justify-content: center;
   align-items: stretch;

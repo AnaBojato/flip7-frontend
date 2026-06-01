@@ -1,0 +1,138 @@
+/* ==========================================================================
+   GAME PAGE LAYOUT (Pantalla Principal del Juego)
+   ========================================================================== */
+
+.game-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #121214; /* Fondo oscuro para resaltar las cartas */
+  color: #e1e1e6;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+/* --- HEADER: Información de la partida --- */
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #29292e;
+}
+
+.game-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.game-status {
+  background-color: #202024;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #323238;
+  font-size: 0.9rem;
+}
+
+/* --- PANEL DE JUGADORES (Lateral o Superior) --- */
+.players-panel {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.player-card {
+  background-color: #1a1a1e;
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  border: 2px solid #29292e;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+/* Resaltar al jugador que tiene el turno actual */
+.player-card.active-turn {
+  border-color: #ff4757; /* Color de acento para el turno */
+  box-shadow: 0 0 12px rgba(255, 71, 87, 0.3);
+  transform: scale(1.05);
+}
+
+
+/* ==========================================================================
+   EL TABLERO DE JUEGO (Donde van las cartas)
+   ========================================================================== */
+
+.game-board {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1a1a1e; /* Color tipo tapete de mesa oscuro */
+  border-radius: 16px;
+  border: 1px solid #29292e;
+  padding: 2rem;
+  margin: 1rem 0;
+  box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Contenedor de la cuadrícula de cartas */
+.cards-grid {
+  display: grid;
+  /* Ajusta automáticamente las columnas según el tamaño de pantalla */
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1000px;
+  justify-content: center;
+}
+
+
+/* --- CONTROLES / ACCIONES DEL JUEGO (Botones de abajo) --- */
+.game-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  padding-top: 1rem;
+}
+
+.btn-action {
+  background-color: #202024;
+  color: #fff;
+  border: 2px solid #323238;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+}
+
+.btn-action:hover {
+  background-color: #ff4757;
+  border-color: #ff4757;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+}
+
+.btn-action:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border-color: #29292e;
+  color: #8d8d99;
+}
+
+.btn-secondary:hover {
+  background-color: #29292e;
+  border-color: #8d8d99;
+  color: #fff;
+  box-shadow: none;
+}
