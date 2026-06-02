@@ -4,6 +4,8 @@ import {
   Trophy
 } from "lucide-react";
 
+import { getCardImage } from "../../utils/cardImages";
+
 import "./PlayerBoard.css";
 
 type Props = {
@@ -50,7 +52,7 @@ export default function PlayerBoard({
 
             <Hand size={16} />
 
-            <span>Stood</span>
+            <span>Stand</span>
 
           </div>
 
@@ -73,18 +75,17 @@ export default function PlayerBoard({
       <div className="cards-container">
 
         {hand.cards.map(
-          (card: any, index: number) => (
+          (card: any) => (
 
-            <div
-              key={index}
-              className="game-card"
-            >
-
-              {card.cardType === "NUMERIC"
-                ? card.numericValue
-                : card.cardType}
-
-            </div>
+            <img
+              key={card.id}
+              className="card-image"
+              src={getCardImage(
+                card.cardType,
+                card.numericValue
+              )}
+              alt={card.cardType}
+            />
 
           )
         )}

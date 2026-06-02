@@ -128,3 +128,19 @@
   padding: 6px;
 
 }
+.cards-container {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.card-image {
+  width: 90px;
+  height: auto;
+  border-radius: 8px;
+  transition: transform 0.2s;
+}
+
+.card-image:hover {
+  transform: translateY(-4px);
+}

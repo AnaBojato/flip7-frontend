@@ -14,31 +14,31 @@ import card12 from "../assets/cards/normalCards/card12.svg";
 
 import freeze from "../assets/cards/specialCards/freeze.svg";
 import secondChance from "../assets/cards/specialCards/secondChance.svg";
-import x2 from "../assets/cards/specialCards/multiplier.svg";
+import multiplier from "../assets/cards/specialCards/multiplier.svg";
 import flipThree from "../assets/cards/specialCards/flipThree.svg";
+
+const numberCards: Record<number, string> = {
+  0: card0,
+  1: card1,
+  2: card2,
+  3: card3,
+  4: card4,
+  5: card5,
+  6: card6,
+  7: card7,
+  8: card8,
+  9: card9,
+  10: card10,
+  11: card11,
+  12: card12,
+};
 
 export const getCardImage = (
   cardType: string,
   numericValue?: number
 ) => {
-  if (cardType === "NUMBER") {
-    const cards: Record<number, string> = {
-      0: card0,
-      1: card1,
-      2: card2,
-      3: card3,
-      4: card4,
-      5: card5,
-      6: card6,
-      7: card7,
-      8: card8,
-      9: card9,
-      10: card10,
-      11: card11,
-      12: card12,
-    };
-
-    return cards[numericValue ?? 0];
+  if (cardType === "NUMERIC" && numericValue !== undefined) {
+    return numberCards[numericValue];
   }
 
   switch (cardType) {
@@ -49,9 +49,9 @@ export const getCardImage = (
       return secondChance;
 
     case "MULTIPLIER":
-      return x2;
+      return multiplier;
 
-    case "FLIP7":
+    case "FLIP_THREE":
       return flipThree;
 
     default:

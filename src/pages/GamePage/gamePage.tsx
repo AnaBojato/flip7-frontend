@@ -1,19 +1,26 @@
 import {
   useEffect,
-  useState
+  useState,
 } from "react";
 
 import {
-  useLocation
+  useLocation,
 } from "react-router-dom";
 
 import {
+  Trophy,
+  Hand,
+  Flag,
+} from "lucide-react";
+
+import {
   getPlayers,
-  getRound
+  getRound,
+  drawCard,
+  standPlayer,
 } from "../../services/gameService";
 
-import PlayerBoard
-  from "../../components/PlayerBoard/PlayerBoard";
+import PlayerBoard from "../../components/PlayerBoard/PlayerBoard";
 
 import "./GamePage.css";
 
@@ -21,8 +28,7 @@ export default function GamePage() {
 
   const location = useLocation();
 
-  const gameId =
-    location.state?.gameId;
+  const gameId = location.state?.gameId;
 
   const [players, setPlayers] =
     useState<any[]>([]);
@@ -60,46 +66,175 @@ export default function GamePage() {
 
   };
 
+  const activeHand =
+    round?.hands?.find(
+      (hand: any) =>
+        !hand.stood &&
+        !hand.busted
+    );
+
+  const handleDraw = async () => {
+
+    if (!activeHand) return;
+
+    try {
+
+      await drawCard(
+        gameId,
+        activeHand.player.id
+      );
+
+      await loadGame();
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+  };
+
+  const handleStand = async () => {
+
+    if (!activeHand) return;
+
+    try {
+
+      await standPlayer(
+        gameId,
+        activeHand.player.id
+      );
+
+      await loadGame();
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+  };
+
   return (
 
     <main className="game-page">
 
-      <div className="game-header">
+      <header className="game-header">
 
-        <h1>
-          Flip 7
-        </h1>
+        <div>
 
-        <div className="game-info">
+          <h1 className="game-title">
+            Flip7
+          </h1>
 
-          <span>
+          <p className="game-id">
             Game #{gameId}
-          </span>
-
-          <span>
-            Round {round?.roundNumber}
-          </span>
+          </p>
 
         </div>
 
-      </div>
+        <div className="round-badge">
 
-      <div className="players-grid">
+          Round {round?.roundNumber}
 
-        {round?.hands?.map(
-          (hand: any) => (
+        </div>
 
-            <PlayerBoard
-              key={hand.player.id}
-              hand={hand}
-            />
+      </header>
 
-          )
-        )}
+      <section className="game-layout">
 
-      </div>
+        <aside className="leaderboard">
+
+          <div className="leaderboard-title">
+
+            <Trophy size={20} />
+
+            <span>
+              Players
+            </span>
+
+          </div>
+
+          {players.map((player) => (
+
+            <div
+              key={player.id}
+              className="player-row"
+            >
+
+              <span>
+                {player.name}
+              </span>
+
+              <span>
+                {player.totalScore}
+              </span>
+
+            </div>
+
+          ))}
+
+        </aside>
+
+        <section className="game-table">
+
+          <div className="table-center">
+
+            <div className="deck-placeholder">
+              DECK
+            </div>
+
+          </div>
+
+          <div className="players-area">
+
+            {round?.hands?.map(
+              (hand: any) => (
+
+                <PlayerBoard
+                  key={hand.player.id}
+                  hand={hand}
+                />
+
+              )
+            )}
+
+          </div>
+
+          <div className="actions">
+
+            <button
+              className="draw-btn"
+              onClick={handleDraw}
+              disabled={!activeHand}
+            >
+
+              <Hand size={20} />
+
+              Draw
+
+            </button>
+
+            <button
+              className="stand-btn"
+              onClick={handleStand}
+              disabled={!activeHand}
+            >
+
+              <Flag size={20} />
+
+              Stand
+
+            </button>
+
+          </div>
+
+        </section>
+
+      </section>
 
     </main>
 
   );
+
 }

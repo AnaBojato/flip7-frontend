@@ -1,0 +1,17 @@
+.flip7-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flip7-card-image {
+  width: 120px;
+  height: auto;
+
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.flip7-card-image:hover {
+  transform: translateY(-5px);
+}
