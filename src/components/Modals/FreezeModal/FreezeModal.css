@@ -1,0 +1,9 @@
+/* FreezeModal.css
+   Todas las clases estructurales (.modal-overlay, .game-modal, .modal-header,
+   .modal-players, .player-option) están definidas en GamePage.css.
+   Solo sobreescribimos el color del icono freeze. */
+
+.freeze-icon {
+  color: #5dade2;
+  filter: drop-shadow(0 0 6px #2980b960);
+}

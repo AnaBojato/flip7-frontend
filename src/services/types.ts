@@ -1,5 +1,6 @@
 export interface Card {
   id: number;
+
   cardType:
     | "NUMERIC"
     | "FREEZE"
@@ -60,5 +61,10 @@ export interface TurnResponse {
     | "FLIP7"
     | "SPECIAL_CARD"
     | "SECOND_CHANCE_USED"
-    | "STAND";
+    | "STAND"
+    | "FREEZE_PENDING"
+    | "FREEZE_SELF"
+    | "FREEZE_SENT"
+    | "FLIP_THREE_PENDING"
+    | "FLIP_THREE_SENT";
 }

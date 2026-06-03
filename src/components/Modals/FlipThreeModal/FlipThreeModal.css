@@ -1,0 +1,8 @@
+/* FlipThreeModal.css
+   Todas las clases estructurales están en GamePage.css.
+   Solo sobreescribimos el color del icono flip three. */
+
+.flipthree-icon {
+  color: #d4ac0d;
+  filter: drop-shadow(0 0 6px #b7770d60);
+}

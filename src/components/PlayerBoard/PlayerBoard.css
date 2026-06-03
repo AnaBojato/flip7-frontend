@@ -1,58 +1,60 @@
 .player-board {
+  width: 100%;
+  max-width: 700px;
 
-  background: rgba(20, 20, 20, 0.9);
+  background: rgba(15, 23, 42, 0.9);
 
-  border: 2px solid #d4af37;
+  border: 1px solid #334155;
 
-  border-radius: 18px;
+  border-radius: 20px;
 
-  padding: 20px;
+  padding: 18px;
 
-  min-height: 220px;
+  backdrop-filter: blur(12px);
 
   box-shadow:
-    0 0 15px rgba(212, 175, 55, 0.25);
+    0 8px 30px rgba(0,0,0,.35);
 
+  transition: .25s;
+}
+
+.player-board:hover {
+  transform: translateY(-2px);
 }
 
 .player-header {
-
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
 
-  margin-bottom: 16px;
-
+  margin-bottom: 12px;
 }
 
 .player-header h3 {
-
   margin: 0;
-
-  color: #f5d76e;
-
-}
-
-.player-score {
-
-  font-size: 1.2rem;
-
-  font-weight: bold;
 
   color: white;
 
+  font-size: 1.2rem;
+}
+
+.player-score {
+  background: #2563eb;
+
+  color: white;
+
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  font-weight: bold;
 }
 
 .player-status {
-
-  margin-bottom: 18px;
-
+  margin-bottom: 20px;
 }
 
 .status {
-
   display: inline-flex;
 
   align-items: center;
@@ -63,84 +65,82 @@
 
   border-radius: 999px;
 
-  font-size: 0.9rem;
+  font-size: .85rem;
 
+  font-weight: 600;
 }
 
 .busted {
-
-  background: rgba(255, 0, 0, 0.2);
-
-  color: #ff8080;
-
+  background: rgba(239,68,68,.15);
+  color: #ef4444;
 }
 
 .stood {
-
-  background: rgba(0, 100, 255, 0.2);
-
-  color: #8fc3ff;
-
+  background: rgba(59,130,246,.15);
+  color: #60a5fa;
 }
 
 .active {
-
-  background: rgba(0, 255, 100, 0.15);
-
-  color: #89ffb0;
-
+  background: rgba(34,197,94,.15);
+  color: #4ade80;
 }
 
 .cards-container {
 
   display: flex;
-
-  flex-wrap: wrap;
-
-  gap: 10px;
-
-}
-
-.game-card {
-
-  width: 70px;
-
-  height: 100px;
-
-  border-radius: 12px;
-
-  background: white;
-
-  color: black;
-
-  display: flex;
-
-  justify-content: center;
 
   align-items: center;
 
-  font-weight: bold;
+  min-height: 140px;
 
-  font-size: 0.9rem;
+  padding-top: 10px;
 
-  text-align: center;
+  overflow-x: auto;
 
-  padding: 6px;
-
+  overflow-y: hidden;
 }
-.cards-container {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
+
+/* efecto abanico */
 
 .card-image {
+
   width: 90px;
-  height: auto;
-  border-radius: 8px;
-  transition: transform 0.2s;
+
+  border-radius: 12px;
+
+  margin-left: -30px;
+
+  transition: all .25s ease;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 20px rgba(0,0,0,.35);
+}
+
+.card-image:first-child {
+  margin-left: 0;
 }
 
 .card-image:hover {
-  transform: translateY(-4px);
+  transform:
+    translateY(-15px)
+    scale(1.08);
+
+  z-index: 100;
+}
+
+/* scrollbar elegante */
+
+.cards-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.cards-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cards-container::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 999px;
 }

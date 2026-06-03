@@ -15,8 +15,7 @@ export const createGame = async (
     {
       method: "POST",
       headers: {
-        "Content-Type":
-          "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         playerNames,
@@ -116,6 +115,60 @@ export const standPlayer = async (
   if (!response.ok) {
     throw new Error(
       "Failed to stand"
+    );
+  }
+
+  return response.json();
+};
+
+export const useFreeze = async (
+  gameId: number,
+  playerId: number,
+  targetPlayerId: number
+): Promise<TurnResponse> => {
+  const response = await fetch(
+    `${API_URL}/games/${gameId}/players/${playerId}/freeze`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        targetPlayerId,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Failed to use freeze"
+    );
+  }
+
+  return response.json();
+};
+
+export const useFlipThree = async (
+  gameId: number,
+  playerId: number,
+  targetPlayerId: number
+): Promise<TurnResponse> => {
+  const response = await fetch(
+    `${API_URL}/games/${gameId}/players/${playerId}/flip-three`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        targetPlayerId,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Failed to use flip three"
     );
   }
 
