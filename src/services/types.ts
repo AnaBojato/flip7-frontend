@@ -1,5 +1,12 @@
 export interface Card {
-  cardType: string;
+  id: number;
+  cardType:
+    | "NUMERIC"
+    | "FREEZE"
+    | "SECOND_CHANCE"
+    | "MULTIPLIER"
+    | "FLIP_THREE";
+
   numericValue: number | null;
 }
 
@@ -22,5 +29,36 @@ export interface RoundResponse {
   id: number;
   roundNumber: number;
   status: string;
+  startingPlayer: Player;
   hands: PlayerHand[];
+}
+
+export interface TurnResponse {
+  status:
+    | "TURN_COMPLETED"
+    | "ROUND_FINISHED"
+    | "GAME_FINISHED"
+    | "DECK_EMPTY";
+
+  gameId: number;
+
+  roundId: number;
+
+  roundNumber: number;
+
+  roundStatus: string;
+
+  currentPlayer?: Player;
+
+  drawnCard?: Card;
+
+  winner?: Player;
+
+  event:
+    | "NORMAL"
+    | "BUST"
+    | "FLIP7"
+    | "SPECIAL_CARD"
+    | "SECOND_CHANCE_USED"
+    | "STAND";
 }

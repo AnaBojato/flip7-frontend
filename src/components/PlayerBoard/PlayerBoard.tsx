@@ -6,10 +6,15 @@ import {
 
 import { getCardImage } from "../../utils/cardImages";
 
+import type {
+  PlayerHand,
+  Card
+} from "../../services/types";
+
 import "./PlayerBoard.css";
 
 type Props = {
-  hand: any;
+  hand: PlayerHand;
 };
 
 export default function PlayerBoard({
@@ -75,7 +80,7 @@ export default function PlayerBoard({
       <div className="cards-container">
 
         {hand.cards.map(
-          (card: any) => (
+          (card: Card) => (
 
             <img
               key={card.id}

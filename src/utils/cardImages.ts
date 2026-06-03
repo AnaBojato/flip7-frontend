@@ -35,13 +35,18 @@ const numberCards: Record<number, string> = {
 
 export const getCardImage = (
   cardType: string,
-  numericValue?: number
-) => {
-  if (cardType === "NUMERIC" && numericValue !== undefined) {
+  numericValue: number | null = null
+): string => {
+
+  if (
+    cardType === "NUMERIC" &&
+    numericValue !== null
+  ) {
     return numberCards[numericValue];
   }
 
   switch (cardType) {
+
     case "FREEZE":
       return freeze;
 
@@ -56,5 +61,7 @@ export const getCardImage = (
 
     default:
       return flipThree;
+
   }
+
 };
