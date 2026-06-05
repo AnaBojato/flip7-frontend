@@ -66,5 +66,22 @@ export interface TurnResponse {
     | "FREEZE_SELF"
     | "FREEZE_SENT"
     | "FLIP_THREE_PENDING"
-    | "FLIP_THREE_SENT";
+    | "FLIP_THREE_SENT"
+    | "FLIP_THREE_SELF";   // ← AGREGADO: faltaba este evento
+}
+
+export interface RoundHistoryResult {
+  player: Player;
+  cards: Card[];
+  busted: boolean;
+  stood: boolean;
+  scoreEarned: number;
+}
+ 
+export interface RoundHistoryResponse {
+  roundId: number;
+  roundNumber: number;
+  status: string;
+  startingPlayer: Player;
+  results: RoundHistoryResult[];
 }

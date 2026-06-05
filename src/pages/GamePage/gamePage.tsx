@@ -1,3 +1,4 @@
+// pages/GamePage.tsx
 import {
   useEffect,
   useState,
@@ -5,44 +6,25 @@ import {
   useRef,
 } from "react";
 
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
-  Trophy,
-  Hand,
-  Flag,
-  Snowflake,
-  RefreshCw,
-  Crown,
-  ChevronRight,
-  Users,
-  Skull,
-  Layers,
-  Swords,
-  CheckCircle2,
-  Shield,
+  Trophy, Hand, Flag, Snowflake, RefreshCw, Crown,
+  ChevronRight, Users, Skull, Layers, Swords,
+  CheckCircle2, Shield,
 } from "lucide-react";
 
 import {
-  getPlayers,
-  getRound,
-  drawCard,
-  standPlayer,
-  useFreeze,
-  useFlipThree,
+  getPlayers, getRound, drawCard, standPlayer,
+  sendFreeze, sendFlipThree,
 } from "../../services/gameService";
 
-import PlayerBoard from "../../components/PlayerBoard/PlayerBoard";
-import FreezeModal from "../../components/modals/FreezeModal/FreezeModal";
-import FlipThreeModal from "../../components/modals/FlipThreeModal/FlipThreeModal";
-
+import PlayerBoard    from "../../components/PlayerBoard/PlayerBoard";
+import FreezeModal    from "../../components/Modals/FreezeModal/FreezeModal";
+import FlipThreeModal from "../../components/Modals/FlipThreeModal/FlipThreeModal";
 import { getCardImage } from "../../utils/cardImages";
 
 import type {
-  Player,
-  RoundResponse,
-  TurnResponse,
-  Card,
-  PlayerHand,
+  Player, RoundResponse, TurnResponse, Card, PlayerHand,
 } from "../../services/types";
 
 import "./GamePage.css";
@@ -57,7 +39,6 @@ type RoundSummaryPlayer = {
   stood: boolean;
 };
 
-// Animación de carta volando desde el centro al leaderboard
 type FlyingCard = {
   id: string;
   card: Card;
@@ -66,28 +47,56 @@ type FlyingCard = {
   fromY: number;
 };
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+/**
+ * Dado un jugador y su mano, devuelve qué modal debe abrirse
+ * si tiene una carta especial pendiente (FREEZE o FLIP_THREE).
+ * Retorna "none" si no hay carta pendiente.
+ */
+function getPendingModal(
+  playerId: number,
+  round: RoundResponse | null
+): ModalState {
+  if (!round) return "none";
+  const hand = round.hands.find(h => h.player.id === playerId);
+  if (!hand) return "none";
+  const pending = hand.cards.find(
+    c => c.cardType === "FREEZE" || c.cardType === "FLIP_THREE"
+  );
+  if (!pending) return "none";
+  return pending.cardType === "FREEZE" ? "freeze" : "flipThree";
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
 export default function GamePage() {
+  const navigate = useNavigate();
   const location = useLocation();
   const gameId = location.state?.gameId;
 
-  const [players, setPlayers]           = useState<Player[]>([]);
-  const [round, setRound]               = useState<RoundResponse | null>(null);
-  const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
-  const [revealedCard, setRevealedCard] = useState<Card | null>(null);
-  const [isShowingCard, setIsShowingCard] = useState(false);
-  const [activeModal, setActiveModal]   = useState<ModalState>("none");
-  const [gameOver, setGameOver]         = useState(false);
-  const [winner, setWinner]             = useState<Player | null>(null);
-  const [roundSummary, setRoundSummary] = useState<RoundSummaryPlayer[] | null>(null);
+  const [players,           setPlayers]           = useState<Player[]>([]);
+  const [round,             setRound]             = useState<RoundResponse | null>(null);
+  const [currentPlayer,     setCurrentPlayer]     = useState<Player | null>(null);
+  const [revealedCard,      setRevealedCard]      = useState<Card | null>(null);
+  const [isShowingCard,     setIsShowingCard]     = useState(false);
+  const [activeModal,       setActiveModal]       = useState<ModalState>("none");
+  const [gameOver,          setGameOver]          = useState(false);
+  const [winner,            setWinner]            = useState<Player | null>(null);
+  const [roundSummary,      setRoundSummary]      = useState<RoundSummaryPlayer[] | null>(null);
   const [isRoundTransition, setIsRoundTransition] = useState(false);
-  const [lastEvent, setLastEvent]       = useState<string | null>(null);
-  const [flyingCards, setFlyingCards]   = useState<FlyingCard[]>([]);
+  const [lastEvent,         setLastEvent]         = useState<string | null>(null);
+  const [flyingCards,       setFlyingCards]       = useState<FlyingCard[]>([]);
+  const [secondChanceActive,setSecondChanceActive]= useState(false);
 
-  // Refs para calcular posición de animación
-  const deckRef      = useRef<HTMLDivElement>(null);
-  const tableRef     = useRef<HTMLDivElement>(null);
+  // ── Ref para bloquear el polling mientras hay una acción en curso ────────
+  // Evita que el polling sobrescriba el estado durante transiciones.
+  const actionInProgressRef = useRef(false);
 
-  // ─── loadGame: solo refresca sin tocar currentPlayer ────────────────────
+  const deckRef  = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
+
+  // ─── loadGame ─────────────────────────────────────────────────────────────
   const loadGame = useCallback(async () => {
     if (!gameId) return;
     try {
@@ -102,7 +111,35 @@ export default function GamePage() {
     }
   }, [gameId]);
 
-  // ─── Inicialización ──────────────────────────────────────────────────────
+  // ─── applyRoundState ──────────────────────────────────────────────────────
+  // Función central para aplicar el estado de una ronda y determinar
+  // el modal correcto para el jugador actual. Elimina la lógica duplicada
+  // que había en initialize, handleContinueRound y handleTurnResult.
+  const applyRoundState = useCallback((
+    roundData: RoundResponse,
+    playersData: Player[],
+    overrideCurrentPlayer?: Player | null,
+  ) => {
+    setRound(roundData);
+    setPlayers(playersData);
+
+    const player = overrideCurrentPlayer !== undefined
+      ? overrideCurrentPlayer
+      : roundData.startingPlayer;
+
+    setCurrentPlayer(player);
+
+    // Si el jugador tiene una carta especial pendiente en su mano inicial,
+    // abrir el modal correspondiente de inmediato.
+    if (player) {
+      const modal = getPendingModal(player.id, roundData);
+      setActiveModal(modal);
+    } else {
+      setActiveModal("none");
+    }
+  }, []);
+
+  // ─── Inicialización ───────────────────────────────────────────────────────
   useEffect(() => {
     if (!gameId) return;
     const initialize = async () => {
@@ -111,62 +148,51 @@ export default function GamePage() {
           getPlayers(gameId),
           getRound(gameId),
         ]);
-        setPlayers(playersData);
-        setRound(roundData);
-        // El primer jugador activo es el startingPlayer de la ronda
-        setCurrentPlayer(roundData.startingPlayer);
+        applyRoundState(roundData, playersData);
       } catch (error) {
         console.error(error);
       }
     };
     void initialize();
-  }, [gameId]);
+  }, [gameId, applyRoundState]);
 
-  // ─── Polling pausado durante modales / animaciones ───────────────────────
+  // ─── Polling ──────────────────────────────────────────────────────────────
+  // Solo corre cuando no hay acción en curso, no hay modal abierto,
+  // no se está mostrando carta y no hay transición de ronda.
   useEffect(() => {
     if (!gameId) return;
     const interval = setInterval(() => {
-      if (activeModal === "none" && !isShowingCard && !isRoundTransition) {
+      if (
+        !actionInProgressRef.current &&
+        activeModal === "none"        &&
+        !isShowingCard                &&
+        !isRoundTransition
+      ) {
         void loadGame();
       }
     }, 2000);
     return () => clearInterval(interval);
   }, [gameId, loadGame, activeModal, isShowingCard, isRoundTransition]);
 
-  // ─── Limpiar badge de evento ─────────────────────────────────────────────
+  // ─── Limpiar badge ────────────────────────────────────────────────────────
   useEffect(() => {
     if (!lastEvent) return;
     const t = setTimeout(() => setLastEvent(null), 2200);
     return () => clearTimeout(t);
   }, [lastEvent]);
 
-  // ─── Carta pendiente en mano del jugador actual ──────────────────────────
+  // ─── Mano del jugador actual ──────────────────────────────────────────────
   const currentHand: PlayerHand | undefined = round?.hands.find(
     h => h.player.id === currentPlayer?.id
   );
 
-  const pendingCard = currentHand?.cards.find(
-    c => c.cardType === "FREEZE" || c.cardType === "FLIP_THREE"
-  ) ?? null;
-
-  const hasPendingFreeze    = pendingCard?.cardType === "FREEZE";
-  const hasPendingFlipThree = pendingCard?.cardType === "FLIP_THREE";
-
-  // ─── Abre modal si hay carta pendiente al empezar turno ─────────────────
-  useEffect(() => {
-    if (!currentPlayer || isShowingCard || isRoundTransition) return;
-    if (hasPendingFreeze && activeModal === "none")    setActiveModal("freeze");
-    else if (hasPendingFlipThree && activeModal === "none") setActiveModal("flipThree");
-  }, [currentPlayer, hasPendingFreeze, hasPendingFlipThree, isShowingCard, isRoundTransition, activeModal]);
-
   // ─── Jugadores disponibles para Freeze / FlipThree ───────────────────────
-  // Excluye a los que ya están busted o stood
   const availablePlayers: Player[] = players.filter(p => {
     const hand = round?.hands.find(h => h.player.id === p.id);
     return !hand?.busted && !hand?.stood;
   });
 
-  // ─── Animación: carta vuela del centro al jugador en leaderboard ─────────
+  // ─── Animación: carta volando ─────────────────────────────────────────────
   const triggerFlyingCard = (card: Card, targetPlayerId: number) => {
     if (!deckRef.current) return;
     const rect = deckRef.current.getBoundingClientRect();
@@ -183,22 +209,23 @@ export default function GamePage() {
     }, 700);
   };
 
-  // ─── Procesamiento central de resultados ────────────────────────────────
+  // ─── handleTurnResult ─────────────────────────────────────────────────────
+  // Procesa la respuesta del backend después de cualquier acción.
   const handleTurnResult = async (result: TurnResponse) => {
     setLastEvent(result.event);
 
-    // ── Fin de juego ──────────────────────────────────────────────────────
+    // ── Juego terminado ────────────────────────────────────────────────────
     if (result.status === "GAME_FINISHED") {
       await loadGame();
       setWinner(result.winner ?? null);
       setGameOver(true);
       setCurrentPlayer(null);
+      setActiveModal("none");
       return;
     }
 
-    // ── Fin de ronda → muestra resumen y prepara nueva ronda ──────────────
+    // ── Ronda terminada ────────────────────────────────────────────────────
     if (result.status === "ROUND_FINISHED") {
-      // Cargamos la ronda ANTERIOR (ya terminada) para el resumen
       const [finishedRound, updatedPlayers] = await Promise.all([
         getRound(gameId).catch(() => null),
         getPlayers(gameId).catch(() => null),
@@ -211,56 +238,91 @@ export default function GamePage() {
         const summary: RoundSummaryPlayer[] = updatedPlayers.map(p => {
           const hand = finishedRound.hands.find(h => h.player.id === p.id);
           return {
-            name: p.name,
+            name:        p.name,
             scoreEarned: hand?.scoreEarned ?? 0,
-            totalScore: p.totalScore,
-            busted: hand?.busted ?? false,
-            stood: hand?.stood ?? false,
+            totalScore:  p.totalScore,
+            busted:      hand?.busted ?? false,
+            stood:       hand?.stood  ?? false,
           };
         });
         setRoundSummary(summary);
       }
       setCurrentPlayer(null);
+      setActiveModal("none");
       return;
     }
 
-    // ── Freeze pendiente → abrir modal ────────────────────────────────────
+    // ── FREEZE_PENDING ─────────────────────────────────────────────────────
+    // El jugador acaba de robar un FREEZE y debe usarlo antes de continuar.
     if (result.event === "FREEZE_PENDING") {
+      const [playersData, roundData] = await Promise.all([
+        getPlayers(gameId),
+        getRound(gameId),
+      ]);
+      setPlayers(playersData);
+      setRound(roundData);
       if (result.currentPlayer) setCurrentPlayer(result.currentPlayer);
-      await loadGame();
       setActiveModal("freeze");
       return;
     }
 
-    // ── FlipThree pendiente → abrir modal ─────────────────────────────────
+    // ── FLIP_THREE_PENDING ─────────────────────────────────────────────────
     if (result.event === "FLIP_THREE_PENDING") {
+      const [playersData, roundData] = await Promise.all([
+        getPlayers(gameId),
+        getRound(gameId),
+      ]);
+      setPlayers(playersData);
+      setRound(roundData);
       if (result.currentPlayer) setCurrentPlayer(result.currentPlayer);
-      await loadGame();
       setActiveModal("flipThree");
       return;
     }
 
-    // ── Turno normal: avanzar jugador ─────────────────────────────────────
-    if (result.currentPlayer) setCurrentPlayer(result.currentPlayer);
-    await loadGame();
+    // ── Turno normal ───────────────────────────────────────────────────────
+    // Cargar el estado fresco y determinar si el NUEVO jugador
+    // tiene una carta especial pendiente en su mano (caso: carta inicial).
+    const [playersData, roundData] = await Promise.all([
+      getPlayers(gameId),
+      getRound(gameId),
+    ]);
+    setPlayers(playersData);
+    setRound(roundData);
+
+    const nextPlayer = result.currentPlayer ?? null;
+    setCurrentPlayer(nextPlayer);
+
+    // FIX CLAVE: después de cualquier acción, revisar si el siguiente
+    // jugador ya tiene FREEZE o FLIP_THREE en su mano (de la carta inicial).
+    // Esto cubre el caso en que el reparto inicial les dio esa carta.
+    if (nextPlayer) {
+      const modal = getPendingModal(nextPlayer.id, roundData);
+      setActiveModal(modal);
+    } else {
+      setActiveModal("none");
+    }
   };
 
-  // ─── DRAW ────────────────────────────────────────────────────────────────
+  // ─── DRAW ─────────────────────────────────────────────────────────────────
   const handleDraw = async () => {
     if (!currentPlayer || isShowingCard) return;
+    actionInProgressRef.current = true;
     try {
       const result = await drawCard(gameId, currentPlayer.id);
 
       if (result.drawnCard) {
         setRevealedCard(result.drawnCard);
         setIsShowingCard(true);
+        setLastEvent(result.event);
 
-        // Tras mostrar la carta, animar al mazo del jugador en leaderboard
+        if (result.event === "SECOND_CHANCE_USED") {
+          setSecondChanceActive(true);
+        }
+
         setTimeout(() => {
           if (result.drawnCard && result.currentPlayer) {
             triggerFlyingCard(result.drawnCard, result.currentPlayer.id);
-          } else if (result.drawnCard && currentPlayer) {
-            // En caso BUST/FLIP7 el drawnCard va al jugador actual
+          } else if (result.drawnCard) {
             triggerFlyingCard(result.drawnCard, currentPlayer.id);
           }
         }, 1800);
@@ -268,101 +330,109 @@ export default function GamePage() {
         setTimeout(async () => {
           setIsShowingCard(false);
           setRevealedCard(null);
+          setSecondChanceActive(false);
           await handleTurnResult(result);
+          actionInProgressRef.current = false;
         }, 2500);
       } else {
         await handleTurnResult(result);
+        actionInProgressRef.current = false;
       }
     } catch (error) {
       console.error(error);
+      actionInProgressRef.current = false;
     }
   };
 
-  // ─── STAND ───────────────────────────────────────────────────────────────
+  // ─── STAND ────────────────────────────────────────────────────────────────
   const handleStand = async () => {
     if (!currentPlayer || isShowingCard) return;
+    actionInProgressRef.current = true;
     try {
       const result = await standPlayer(gameId, currentPlayer.id);
       await handleTurnResult(result);
     } catch (error) {
       console.error(error);
+    } finally {
+      actionInProgressRef.current = false;
     }
   };
 
-  // ─── FREEZE confirm ──────────────────────────────────────────────────────
+  // ─── FREEZE confirm ───────────────────────────────────────────────────────
   const handleFreezeSelect = async (targetId: number) => {
     if (!currentPlayer) return;
     setActiveModal("none");
+    actionInProgressRef.current = true;
     try {
-      const result = await useFreeze(gameId, currentPlayer.id, targetId);
+      const result = await sendFreeze(gameId, currentPlayer.id, targetId);
       await handleTurnResult(result);
     } catch (error) {
       console.error(error);
+    } finally {
+      actionInProgressRef.current = false;
     }
   };
 
-  // ─── FLIP THREE confirm ──────────────────────────────────────────────────
+  // ─── FLIP THREE confirm ───────────────────────────────────────────────────
   const handleFlipThreeSelect = async (targetId: number) => {
     if (!currentPlayer) return;
     setActiveModal("none");
+    actionInProgressRef.current = true;
     try {
-      const result = await useFlipThree(gameId, currentPlayer.id, targetId);
+      const result = await sendFlipThree(gameId, currentPlayer.id, targetId);
       await handleTurnResult(result);
     } catch (error) {
       console.error(error);
+    } finally {
+      actionInProgressRef.current = false;
     }
   };
 
-  // ─── Continuar después del resumen (carga la nueva ronda ya creada) ──────
+  // ─── Continuar después del resumen de ronda ───────────────────────────────
   const handleContinueRound = async () => {
     setIsRoundTransition(true);
     setRoundSummary(null);
-
+    actionInProgressRef.current = true;
     try {
-      // El back ya creó la nueva ronda en buildResult → startNewRound
-      // Solo necesitamos refrescar y usar el startingPlayer de la nueva ronda
       const [updatedPlayers, newRound] = await Promise.all([
         getPlayers(gameId),
         getRound(gameId),
       ]);
-
-      setPlayers(updatedPlayers);
-      setRound(newRound);
-
-      // ✅ FIX PRINCIPAL: usar startingPlayer de la nueva ronda,
-      //    NO buscar el primer hand sin bust/stood (todos están fresh)
-      setCurrentPlayer(newRound.startingPlayer);
+      // applyRoundState detecta automáticamente si el startingPlayer
+      // de la nueva ronda tiene una carta especial pendiente.
+      applyRoundState(newRound, updatedPlayers);
     } catch (error) {
       console.error(error);
     } finally {
       setIsRoundTransition(false);
+      actionInProgressRef.current = false;
     }
   };
 
-  // ─── Deshabilitar acciones ────────────────────────────────────────────────
+  // ─── Deshabilitar acciones ─────────────────────────────────────────────────
   const actionsDisabled =
     !currentPlayer ||
-    isShowingCard ||
-    activeModal !== "none" ||
-    hasPendingFreeze ||
-    hasPendingFlipThree;
+    isShowingCard  ||
+    activeModal !== "none";
 
-  // ─── Badge de evento ──────────────────────────────────────────────────────
+  const hasPendingFreeze    = activeModal === "freeze";
+  const hasPendingFlipThree = activeModal === "flipThree";
+
+  // ─── Badge de evento ───────────────────────────────────────────────────────
   const eventLabel: Record<string, { text: string; cls: string }> = {
-    BUST:               { text: "💀 BUST!",          cls: "event-bust"   },
-    FLIP7:              { text: "🎉 FLIP 7!",         cls: "event-flip7"  },
-    SECOND_CHANCE_USED: { text: "🛡 Second Chance!",  cls: "event-second" },
-    STAND:              { text: "✋ Stand",            cls: "event-stand"  },
-    FREEZE_SENT:        { text: "❄ Frozen!",          cls: "event-freeze" },
-    FREEZE_SELF:        { text: "❄ Self-Frozen!",     cls: "event-freeze" },
-    FLIP_THREE_SENT:    { text: "🔄 Flip Three!",     cls: "event-flip3"  },
-    FLIP_THREE_SELF:    { text: "🔄 Flip Three (Self)!", cls: "event-flip3" },
+    BUST:               { text: "💀 BUST!",             cls: "event-bust"   },
+    FLIP7:              { text: "🎉 FLIP 7!",            cls: "event-flip7"  },
+    SECOND_CHANCE_USED: { text: "🛡 Second Chance!",     cls: "event-second" },
+    STAND:              { text: "✋ Stand",               cls: "event-stand"  },
+    FREEZE_SENT:        { text: "❄ Frozen!",             cls: "event-freeze" },
+    FREEZE_SELF:        { text: "❄ Self-Frozen!",        cls: "event-freeze" },
+    FLIP_THREE_SENT:    { text: "🔄 Flip Three!",        cls: "event-flip3"  },
+    FLIP_THREE_SELF:    { text: "🔄 Flip Three (Self)!", cls: "event-flip3"  },
   };
 
   return (
     <main className="game-page">
 
-      {/* ── Tarjetas volando (animación al leaderboard) ── */}
       {flyingCards.map(fc => (
         <FlyingCardEl key={fc.id} flyingCard={fc} />
       ))}
@@ -428,10 +498,21 @@ export default function GamePage() {
             <div className="confetti-ring">
               <Crown size={48} className="crown-icon" />
             </div>
+
             <h2 className="gameover-title">Game Over</h2>
+
             <p className="winner-label">Winner</p>
             <p className="winner-name">{winner?.name}</p>
-            <p className="winner-score">{winner?.totalScore} points</p>
+            <p className="winner-score">
+              {winner?.totalScore} points
+            </p>
+
+            <button
+              className="archives-btn"
+              onClick={() => navigate("/archives")}
+            >
+              View Archives
+            </button>
           </div>
         </div>
       )}
@@ -453,12 +534,9 @@ export default function GamePage() {
 
       {/* ── Layout ── */}
       <section className="game-layout">
-
-        {/* ── Tablero ── */}
         <section className="game-table" ref={tableRef}>
           <div className="felt-texture" />
 
-          {/* Banner jugador activo */}
           <div className="current-turn-banner">
             <Users size={16} />
             <span>
@@ -468,11 +546,8 @@ export default function GamePage() {
             </span>
           </div>
 
-          {/* Centro de mesa */}
           <div className="table-center">
             <div className="table-oval">
-
-              {/* Mazo */}
               <div
                 className={`deck-stack ${isShowingCard ? "deck-dealing" : ""}`}
                 ref={deckRef}
@@ -485,7 +560,6 @@ export default function GamePage() {
                 </div>
               </div>
 
-              {/* Carta revelada */}
               {isShowingCard && revealedCard && (
                 <div className="card-reveal-slot">
                   <img
@@ -493,10 +567,15 @@ export default function GamePage() {
                     src={getCardImage(revealedCard.cardType, revealedCard.numericValue)}
                     alt="Drawn Card"
                   />
+                  {secondChanceActive && (
+                    <div className="second-chance-overlay">
+                      <Shield size={32} className="sc-shield-icon" />
+                      <span>Protected!</span>
+                    </div>
+                  )}
                 </div>
               )}
 
-              {/* Badge de evento */}
               {lastEvent && eventLabel[lastEvent] && (
                 <div className={`event-badge ${eventLabel[lastEvent].cls}`}>
                   {eventLabel[lastEvent].text}
@@ -505,14 +584,12 @@ export default function GamePage() {
             </div>
           </div>
 
-          {/* Mano del jugador actual */}
           {currentHand && (
             <div className="hand-area">
               <PlayerBoard hand={currentHand} />
             </div>
           )}
 
-          {/* Botones de acción */}
           <div className="actions">
             {hasPendingFreeze && currentPlayer && (
               <button
@@ -563,7 +640,6 @@ export default function GamePage() {
             <Trophy size={18} />
             <span>Scoreboard</span>
           </div>
-
           <div className="leaderboard-list">
             {players
               .slice()
@@ -586,12 +662,9 @@ export default function GamePage() {
                       isStood   ? "lb-stood"   : "",
                     ].filter(Boolean).join(" ")}
                   >
-                    {/* Fila superior: rank / nombre / estado / score */}
                     <div className="lb-top">
                       <span className="lb-rank">
-                        {index === 0
-                          ? <Crown size={13} />
-                          : `#${index + 1}`}
+                        {index === 0 ? <Crown size={13} /> : `#${index + 1}`}
                       </span>
                       <span className="lb-name">{player.name}</span>
                       <span className="lb-status">
@@ -607,7 +680,6 @@ export default function GamePage() {
                       <span className="lb-score">{player.totalScore}</span>
                     </div>
 
-                    {/* Mini-mazo: cartas del jugador esta ronda */}
                     {hand && hand.cards.length > 0 && (
                       <div className="lb-cards">
                         {hand.cards.map((card, ci) => (
@@ -637,7 +709,6 @@ export default function GamePage() {
   );
 }
 
-// ─── Helper: icono para cartas especiales en el mini-mazo ─────────────────
 function cardTypeIcon(cardType: string) {
   switch (cardType) {
     case "FREEZE":        return "❄";
@@ -648,10 +719,8 @@ function cardTypeIcon(cardType: string) {
   }
 }
 
-// ─── Componente de carta volando ──────────────────────────────────────────
 function FlyingCardEl({ flyingCard }: { flyingCard: FlyingCard }) {
   const img = getCardImage(flyingCard.card.cardType, flyingCard.card.numericValue);
-
   return (
     <img
       className="flying-card"

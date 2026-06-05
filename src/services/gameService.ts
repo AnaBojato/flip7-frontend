@@ -121,7 +121,7 @@ export const standPlayer = async (
   return response.json();
 };
 
-export const useFreeze = async (
+export const sendFreeze = async (
   gameId: number,
   playerId: number,
   targetPlayerId: number
@@ -148,7 +148,7 @@ export const useFreeze = async (
   return response.json();
 };
 
-export const useFlipThree = async (
+export const sendFlipThree = async (
   gameId: number,
   playerId: number,
   targetPlayerId: number
@@ -172,5 +172,35 @@ export const useFlipThree = async (
     );
   }
 
+  return response.json();
+};
+
+import type { RoundHistoryResponse } from "./types";
+ 
+export const getGameHistory = async (
+  gameId: number
+): Promise<RoundHistoryResponse[]> => {
+  const response = await fetch(
+    `${API_URL}/games/${gameId}/history`
+  );
+ 
+  if (!response.ok) {
+    throw new Error("Failed to get game history");
+  }
+ 
+  return response.json();
+};
+ 
+export const getGameInfo = async (
+  gameId: number
+): Promise<{ id: number; status: string; winner: Player | null }> => {
+  const response = await fetch(
+    `${API_URL}/games/${gameId}`
+  );
+ 
+  if (!response.ok) {
+    throw new Error("Failed to get game info");
+  }
+ 
   return response.json();
 };

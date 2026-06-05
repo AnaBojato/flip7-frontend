@@ -607,3 +607,91 @@
   .leaderboard-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
   .table-oval  { height: 165px; }
 }
+
+/* ── Agregar al final de GamePage.css ───────────────────────────────────── */
+
+/* Overlay de Second Chance sobre la carta revelada */
+.card-reveal-slot {
+  position: absolute;
+  right: 18%;
+}
+
+.second-chance-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-card);
+  background: #8e44ad88;
+  border: 2px solid #d7bde2;
+  box-shadow: 0 0 24px #8e44adaa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  animation: scOverlayIn 0.3s var(--ease-bounce) forwards;
+  z-index: 10;
+}
+
+.second-chance-overlay span {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  color: #f0e6ff;
+}
+
+.sc-shield-icon {
+  color: #d7bde2;
+  filter: drop-shadow(0 0 8px #8e44adcc);
+  animation: shieldPulse 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes scOverlayIn {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shieldPulse {
+  from { transform: scale(1);    filter: drop-shadow(0 0 6px #8e44ad80); }
+  to   { transform: scale(1.15); filter: drop-shadow(0 0 14px #8e44adff); }
+}
+
+.archives-btn {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 0.9rem;
+
+  background: linear-gradient(
+    135deg,
+    #c9a84c,
+    #a07c30
+  );
+
+  color: #1a1200;
+  border: none;
+  border-radius: 10px;
+
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  box-shadow: 0 4px 16px #c9a84c40;
+}
+
+.archives-btn:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 6px 22px #c9a84c80;
+
+  background: linear-gradient(
+    135deg,
+    #e8c96a,
+    #c9a84c
+  );
+}
