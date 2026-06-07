@@ -9,7 +9,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Trophy, Hand, Flag, Snowflake, RefreshCw, Crown,
-  ChevronRight, Users, Skull, Layers, Swords,
+  ChevronRight, Skull, Layers, Swords,
   CheckCircle2, Shield,
 } from "lucide-react";
 
@@ -18,7 +18,7 @@ import {
   sendFreeze, sendFlipThree,
 } from "../../services/gameService";
 
-import PlayerBoard    from "../../components/PlayerBoard/PlayerBoard";
+import PlayerPanel    from "../../components/PlayerBoard/PlayerBoard";
 import FreezeModal    from "../../components/Modals/FreezeModal/FreezeModal";
 import FlipThreeModal from "../../components/Modals/FlipThreeModal/FlipThreeModal";
 import { getCardImage } from "../../utils/cardImages";
@@ -27,7 +27,7 @@ import type {
   Player, RoundResponse, TurnResponse, Card, PlayerHand,
 } from "../../services/types";
 
-import "./GamePage.css";
+import "./gamePage.css";
 
 type ModalState = "none" | "freeze" | "flipThree";
 
@@ -49,11 +49,6 @@ type FlyingCard = {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-/**
- * Dado un jugador y su mano, devuelve qué modal debe abrirse
- * si tiene una carta especial pendiente (FREEZE o FLIP_THREE).
- * Retorna "none" si no hay carta pendiente.
- */
 function getPendingModal(
   playerId: number,
   round: RoundResponse | null
@@ -89,10 +84,7 @@ export default function GamePage() {
   const [flyingCards,       setFlyingCards]       = useState<FlyingCard[]>([]);
   const [secondChanceActive,setSecondChanceActive]= useState(false);
 
-  // ── Ref para bloquear el polling mientras hay una acción en curso ────────
-  // Evita que el polling sobrescriba el estado durante transiciones.
   const actionInProgressRef = useRef(false);
-
   const deckRef  = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -112,9 +104,6 @@ export default function GamePage() {
   }, [gameId]);
 
   // ─── applyRoundState ──────────────────────────────────────────────────────
-  // Función central para aplicar el estado de una ronda y determinar
-  // el modal correcto para el jugador actual. Elimina la lógica duplicada
-  // que había en initialize, handleContinueRound y handleTurnResult.
   const applyRoundState = useCallback((
     roundData: RoundResponse,
     playersData: Player[],
@@ -129,8 +118,6 @@ export default function GamePage() {
 
     setCurrentPlayer(player);
 
-    // Si el jugador tiene una carta especial pendiente en su mano inicial,
-    // abrir el modal correspondiente de inmediato.
     if (player) {
       const modal = getPendingModal(player.id, roundData);
       setActiveModal(modal);
@@ -157,8 +144,6 @@ export default function GamePage() {
   }, [gameId, applyRoundState]);
 
   // ─── Polling ──────────────────────────────────────────────────────────────
-  // Solo corre cuando no hay acción en curso, no hay modal abierto,
-  // no se está mostrando carta y no hay transición de ronda.
   useEffect(() => {
     if (!gameId) return;
     const interval = setInterval(() => {
@@ -210,11 +195,9 @@ export default function GamePage() {
   };
 
   // ─── handleTurnResult ─────────────────────────────────────────────────────
-  // Procesa la respuesta del backend después de cualquier acción.
   const handleTurnResult = async (result: TurnResponse) => {
     setLastEvent(result.event);
 
-    // ── Juego terminado ────────────────────────────────────────────────────
     if (result.status === "GAME_FINISHED") {
       await loadGame();
       setWinner(result.winner ?? null);
@@ -224,7 +207,6 @@ export default function GamePage() {
       return;
     }
 
-    // ── Ronda terminada ────────────────────────────────────────────────────
     if (result.status === "ROUND_FINISHED") {
       const [finishedRound, updatedPlayers] = await Promise.all([
         getRound(gameId).catch(() => null),
@@ -252,8 +234,6 @@ export default function GamePage() {
       return;
     }
 
-    // ── FREEZE_PENDING ─────────────────────────────────────────────────────
-    // El jugador acaba de robar un FREEZE y debe usarlo antes de continuar.
     if (result.event === "FREEZE_PENDING") {
       const [playersData, roundData] = await Promise.all([
         getPlayers(gameId),
@@ -266,7 +246,6 @@ export default function GamePage() {
       return;
     }
 
-    // ── FLIP_THREE_PENDING ─────────────────────────────────────────────────
     if (result.event === "FLIP_THREE_PENDING") {
       const [playersData, roundData] = await Promise.all([
         getPlayers(gameId),
@@ -279,9 +258,6 @@ export default function GamePage() {
       return;
     }
 
-    // ── Turno normal ───────────────────────────────────────────────────────
-    // Cargar el estado fresco y determinar si el NUEVO jugador
-    // tiene una carta especial pendiente en su mano (caso: carta inicial).
     const [playersData, roundData] = await Promise.all([
       getPlayers(gameId),
       getRound(gameId),
@@ -292,9 +268,6 @@ export default function GamePage() {
     const nextPlayer = result.currentPlayer ?? null;
     setCurrentPlayer(nextPlayer);
 
-    // FIX CLAVE: después de cualquier acción, revisar si el siguiente
-    // jugador ya tiene FREEZE o FLIP_THREE en su mano (de la carta inicial).
-    // Esto cubre el caso en que el reparto inicial les dio esa carta.
     if (nextPlayer) {
       const modal = getPendingModal(nextPlayer.id, roundData);
       setActiveModal(modal);
@@ -398,8 +371,6 @@ export default function GamePage() {
         getPlayers(gameId),
         getRound(gameId),
       ]);
-      // applyRoundState detecta automáticamente si el startingPlayer
-      // de la nueva ronda tiene una carta especial pendiente.
       applyRoundState(newRound, updatedPlayers);
     } catch (error) {
       console.error(error);
@@ -430,9 +401,22 @@ export default function GamePage() {
     FLIP_THREE_SELF:    { text: "🔄 Flip Three (Self)!", cls: "event-flip3"  },
   };
 
+  // ─── Distribute players around the table ──────────────────────────────────
+  // Positions: top-center, left-top, right-top, left-bottom, right-bottom
+  // The "YOU" (local player) always appears at bottom-center
+  const tablePositions = ["top", "left-top", "right-top", "left-bottom", "right-bottom"] as const;
+
+  // Sort players by totalScore descending for scoreboard
+  const sortedForScoreboard = [...players].sort((a, b) => b.totalScore - a.totalScore);
+
+  // For the table layout we use original order, excluding the current user if needed
+  // We just map players to positions (up to 5 shown around the table)
+  const tablePlayers = players.slice(0, 5);
+
   return (
     <main className="game-page">
 
+      {/* Flying cards */}
       {flyingCards.map(fc => (
         <FlyingCardEl key={fc.id} flyingCard={fc} />
       ))}
@@ -498,15 +482,10 @@ export default function GamePage() {
             <div className="confetti-ring">
               <Crown size={48} className="crown-icon" />
             </div>
-
             <h2 className="gameover-title">Game Over</h2>
-
             <p className="winner-label">Winner</p>
             <p className="winner-name">{winner?.name}</p>
-            <p className="winner-score">
-              {winner?.totalScore} points
-            </p>
-
+            <p className="winner-score">{winner?.totalScore} points</p>
             <button
               className="archives-btn"
               onClick={() => navigate("/archives")}
@@ -532,13 +511,14 @@ export default function GamePage() {
         <div className="game-id-chip">#{gameId}</div>
       </header>
 
-      {/* ── Layout ── */}
-      <section className="game-layout">
-        <section className="game-table" ref={tableRef}>
-          <div className="felt-texture" />
+      {/* ── Main layout ── */}
+      <div className="game-layout">
 
+        {/* ── Board area ── */}
+        <div className="game-table" ref={tableRef}>
+
+          {/* Turn banner — top-left */}
           <div className="current-turn-banner">
-            <Users size={16} />
             <span>
               {currentPlayer
                 ? <><strong>{currentPlayer.name}</strong>'s turn</>
@@ -546,165 +526,215 @@ export default function GamePage() {
             </span>
           </div>
 
-          <div className="table-center">
-            <div className="table-oval">
-              <div
-                className={`deck-stack ${isShowingCard ? "deck-dealing" : ""}`}
-                ref={deckRef}
-              >
-                <div className="deck-card deck-card--3" />
-                <div className="deck-card deck-card--2" />
-                <div className="deck-card deck-card--1">
-                  <Layers size={24} />
-                  <span>DECK</span>
-                </div>
-              </div>
+          <div className="table-arena">
+            {players.map((p, index) => {
+              const hand = round?.hands.find(h => h.player.id === p.id);
 
-              {isShowingCard && revealedCard && (
-                <div className="card-reveal-slot">
-                  <img
-                    className="revealed-card"
-                    src={getCardImage(revealedCard.cardType, revealedCard.numericValue)}
-                    alt="Drawn Card"
+              const angle =
+                ((Math.PI * 2) / players.length) * index - Math.PI / 2;
+
+              const radius = players.length <= 5 ? 280 : 340;
+
+              const x = Math.cos(angle) * radius;
+              const y = Math.sin(angle) * radius;
+
+              return (
+                <div
+                  key={p.id}
+                  className="arena-slot"
+                  style={{
+                    left: `calc(50% + ${x}px)`,
+                    top: `calc(50% + ${y}px)`,
+                  }}
+                >
+                  <PlayerPanel
+                    hand={
+                      hand ?? {
+                        player: p,
+                        cards: [],
+                        busted: false,
+                        stood: false,
+                        scoreEarned: 0,
+                      }
+                    }
+                    isActive={currentPlayer?.id === p.id}
+                    isCurrentUser={false}
                   />
-                  {secondChanceActive && (
-                    <div className="second-chance-overlay">
-                      <Shield size={32} className="sc-shield-icon" />
-                      <span>Protected!</span>
-                    </div>
-                  )}
                 </div>
-              )}
+              );
+            })}
 
-              {lastEvent && eventLabel[lastEvent] && (
-                <div className={`event-badge ${eventLabel[lastEvent].cls}`}>
-                  {eventLabel[lastEvent].text}
+            <div className="table-center">
+              <div className="table-oval">
+
+                {/* DEJA AQUÍ TODO TU CÓDIGO DEL DECK */}
+                {/* NO BORRES NADA DE table-center */}
+
+                <div
+                  className={`deck-stack ${isShowingCard ? "deck-dealing" : ""}`}
+                  ref={deckRef}
+                  onClick={!actionsDisabled ? handleDraw : undefined}
+                >
+                  <div className="deck-card deck-card--3" />
+                  <div className="deck-card deck-card--2" />
+                  <div className="deck-card deck-card--1">
+                    <Layers size={24} />
+                    <span>DECK</span>
+                  </div>
                 </div>
+
+                {isShowingCard && revealedCard && (
+                  <div className="card-reveal-slot">
+                    <img
+                      className="revealed-card"
+                      src={getCardImage(revealedCard.cardType, revealedCard.numericValue)}
+                      alt="Drawn Card"
+                    />
+                    {secondChanceActive && (
+                      <div className="second-chance-overlay">
+                        <Shield size={32} className="sc-shield-icon" />
+                        <span>Protected!</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {lastEvent && eventLabel[lastEvent] && (
+                  <div className={`event-badge ${eventLabel[lastEvent].cls}`}>
+                    {eventLabel[lastEvent].text}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>{/* end .table-arena */}
+
+          {/* ── Bottom: current player hand + actions ── */}
+          <div className="bottom-area">
+            {currentHand && (
+              <div className="hand-area">
+                <PlayerPanel
+                  hand={currentHand}
+                  isActive={true}
+                  isCurrentUser={true}
+                />
+              </div>
+            )}
+
+            <div className="actions">
+              {hasPendingFreeze && currentPlayer && (
+                <button
+                  className="action-btn btn-special btn-freeze"
+                  onClick={() => setActiveModal("freeze")}
+                  disabled={isShowingCard}
+                >
+                  <Snowflake size={20} />
+                  Use Freeze
+                </button>
+              )}
+              {hasPendingFlipThree && currentPlayer && (
+                <button
+                  className="action-btn btn-special btn-flipthree"
+                  onClick={() => setActiveModal("flipThree")}
+                  disabled={isShowingCard}
+                >
+                  <RefreshCw size={20} />
+                  Flip Three
+                </button>
+              )}
+              {!hasPendingFreeze && !hasPendingFlipThree && (
+                <>
+                  <button
+                    className="action-btn btn-draw"
+                    onClick={handleDraw}
+                    disabled={actionsDisabled}
+                  >
+                    <Hand size={20} />
+                    Draw
+                  </button>
+                  <button
+                    className="action-btn btn-stand"
+                    onClick={handleStand}
+                    disabled={actionsDisabled}
+                  >
+                    <Flag size={20} />
+                    Stand
+                  </button>
+                </>
               )}
             </div>
           </div>
 
-          {currentHand && (
-            <div className="hand-area">
-              <PlayerBoard hand={currentHand} />
-            </div>
-          )}
+        </div>{/* end .game-table */}
 
-          <div className="actions">
-            {hasPendingFreeze && currentPlayer && (
-              <button
-                className="action-btn btn-special btn-freeze"
-                onClick={() => setActiveModal("freeze")}
-                disabled={isShowingCard}
-              >
-                <Snowflake size={20} />
-                Use Freeze
-              </button>
-            )}
-            {hasPendingFlipThree && currentPlayer && (
-              <button
-                className="action-btn btn-special btn-flipthree"
-                onClick={() => setActiveModal("flipThree")}
-                disabled={isShowingCard}
-              >
-                <RefreshCw size={20} />
-                Flip Three
-              </button>
-            )}
-            {!hasPendingFreeze && !hasPendingFlipThree && (
-              <>
-                <button
-                  className="action-btn btn-draw"
-                  onClick={handleDraw}
-                  disabled={actionsDisabled}
-                >
-                  <Hand size={20} />
-                  Draw
-                </button>
-                <button
-                  className="action-btn btn-stand"
-                  onClick={handleStand}
-                  disabled={actionsDisabled}
-                >
-                  <Flag size={20} />
-                  Stand
-                </button>
-              </>
-            )}
-          </div>
-        </section>
-
-        {/* ── Leaderboard ── */}
+        {/* ── Scoreboard ── */}
         <aside className="leaderboard">
           <div className="leaderboard-header">
             <Trophy size={18} />
             <span>Scoreboard</span>
           </div>
           <div className="leaderboard-list">
-            {players
-              .slice()
-              .sort((a, b) => b.totalScore - a.totalScore)
-              .map((player, index) => {
-                const isCurrent = currentPlayer?.id === player.id;
-                const hand: PlayerHand | undefined = round?.hands.find(
-                  h => h.player.id === player.id
-                );
-                const isBusted = hand?.busted ?? false;
-                const isStood  = hand?.stood  ?? false;
+            {sortedForScoreboard.map((player, index) => {
+              const isCurrent = currentPlayer?.id === player.id;
+              const hand: PlayerHand | undefined = round?.hands.find(
+                h => h.player.id === player.id
+              );
+              const isBusted = hand?.busted ?? false;
+              const isStood  = hand?.stood  ?? false;
 
-                return (
-                  <div
-                    key={player.id}
-                    className={[
-                      "lb-row",
-                      isCurrent ? "lb-active"  : "",
-                      isBusted  ? "lb-busted"  : "",
-                      isStood   ? "lb-stood"   : "",
-                    ].filter(Boolean).join(" ")}
-                  >
-                    <div className="lb-top">
-                      <span className="lb-rank">
-                        {index === 0 ? <Crown size={13} /> : `#${index + 1}`}
-                      </span>
-                      <span className="lb-name">{player.name}</span>
-                      <span className="lb-status">
-                        {isBusted && <Skull size={13} />}
-                        {isStood  && <CheckCircle2 size={13} />}
-                        {!isBusted && !isStood && hand?.cards.some(
-                          c => c.cardType === "SECOND_CHANCE"
-                        ) && <Shield size={13} className="sc-icon" />}
-                        {isCurrent && !isBusted && !isStood && (
-                          <span className="lb-active-dot" />
-                        )}
-                      </span>
-                      <span className="lb-score">{player.totalScore}</span>
-                    </div>
-
-                    {hand && hand.cards.length > 0 && (
-                      <div className="lb-cards">
-                        {hand.cards.map((card, ci) => (
-                          <div
-                            key={`${card.id}-${ci}`}
-                            className={`lb-card lb-card--${card.cardType.toLowerCase()}`}
-                            title={
-                              card.cardType === "NUMERIC"
-                                ? String(card.numericValue)
-                                : card.cardType
-                            }
-                          >
-                            {card.cardType === "NUMERIC"
-                              ? card.numericValue
-                              : cardTypeIcon(card.cardType)}
-                          </div>
-                        ))}
-                      </div>
-                    )}
+              return (
+                <div
+                  key={player.id}
+                  className={[
+                    "lb-row",
+                    isCurrent ? "lb-active"  : "",
+                    isBusted  ? "lb-busted"  : "",
+                    isStood   ? "lb-stood"   : "",
+                  ].filter(Boolean).join(" ")}
+                >
+                  <div className="lb-top">
+                    <span className="lb-rank">
+                      {index === 0 ? <Crown size={13} /> : `#${index + 1}`}
+                    </span>
+                    <span className="lb-name">{player.name}</span>
+                    <span className="lb-status">
+                      {isBusted && <Skull size={13} />}
+                      {isStood  && <CheckCircle2 size={13} />}
+                      {!isBusted && !isStood && hand?.cards.some(
+                        c => c.cardType === "SECOND_CHANCE"
+                      ) && <Shield size={13} className="sc-icon" />}
+                      {isCurrent && !isBusted && !isStood && (
+                        <span className="lb-active-dot" />
+                      )}
+                    </span>
+                    <span className="lb-score">{player.totalScore}</span>
                   </div>
-                );
-              })}
+
+                  {hand && hand.cards.length > 0 && (
+                    <div className="lb-cards">
+                      {hand.cards.map((card, ci) => (
+                        <div
+                          key={`${card.id}-${ci}`}
+                          className={`lb-card lb-card--${card.cardType.toLowerCase()}`}
+                          title={
+                            card.cardType === "NUMERIC"
+                              ? String(card.numericValue)
+                              : card.cardType
+                          }
+                        >
+                          {card.cardType === "NUMERIC"
+                            ? card.numericValue
+                            : cardTypeIcon(card.cardType)}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </aside>
-      </section>
+
+      </div>{/* end .game-layout */}
     </main>
   );
 }

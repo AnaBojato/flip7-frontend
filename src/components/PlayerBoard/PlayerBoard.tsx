@@ -1,103 +1,69 @@
-import {
-  Skull,
-  Hand,
-  Trophy
-} from "lucide-react";
-
-import { getCardImage } from "../../utils/cardImages";
-
-import type {
-  PlayerHand,
-  Card
-} from "../../services/types";
-
+// components/PlayerBoard/PlayerBoard.tsx
+import { Skull, Hand, Trophy } from "lucide-react";
+//import { getCardImage } from "../../utils/cardImages";
+import type { PlayerHand, Card } from "../../services/types";
 import "./PlayerBoard.css";
 
 type Props = {
   hand: PlayerHand;
+  isActive?: boolean;
+  isCurrentUser?: boolean;
 };
 
-export default function PlayerBoard({
-  hand
-}: Props) {
+function cardTypeIcon(cardType: string) {
+  switch (cardType) {
+    case "FREEZE":        return "❄";
+    case "FLIP_THREE":    return "🔄";
+    case "SECOND_CHANCE": return "🛡";
+    case "MULTIPLIER":    return "×2";
+    default:              return "?";
+  }
+}
+
+export default function PlayerPanel({ hand, isActive = false, isCurrentUser = false }: Props) {
+  const statusCls = hand.busted ? "busted" : hand.stood ? "stood" : "active";
 
   return (
+    <div className={[
+      "player-board",
+      isActive      ? "player-board--active" : "",
+      isCurrentUser ? "player-board--you"    : "",
+      hand.busted   ? "player-board--busted" : "",
+      hand.stood    ? "player-board--stood"  : "",
+    ].filter(Boolean).join(" ")}>
 
-    <div className="player-board">
-
+      {/* Header row */}
       <div className="player-header">
-
-        <h3>
-          {hand.player.name}
-        </h3>
-
-        <span className="player-score">
-          {hand.scoreEarned}
-        </span>
-
+        <div className="player-info">
+          <span className="player-name">
+            {isCurrentUser ? "YOU" : hand.player.name}
+          </span>
+          <div className={`player-status-badge ${statusCls}`}>
+            {hand.busted && <><Skull size={11} /> Bust</>}
+            {hand.stood  && <><Hand  size={11} /> Stand</>}
+            {!hand.busted && !hand.stood && <><Trophy size={11} /> Playing</>}
+          </div>
+        </div>
+        <span className="player-score">{hand.scoreEarned}</span>
       </div>
 
-      <div className="player-status">
-
-        {hand.busted && (
-
-          <div className="status busted">
-
-            <Skull size={16} />
-
-            <span>Busted</span>
-
-          </div>
-
-        )}
-
-        {hand.stood && (
-
-          <div className="status stood">
-
-            <Hand size={16} />
-
-            <span>Stand</span>
-
-          </div>
-
-        )}
-
-        {!hand.busted && !hand.stood && (
-
-          <div className="status active">
-
-            <Trophy size={16} />
-
-            <span>Playing</span>
-
-          </div>
-
-        )}
-
-      </div>
-
-      <div className="cards-container">
-
-        {hand.cards.map(
-          (card: Card) => (
-
-            <img
-              key={card.id}
-              className="card-image"
-              src={getCardImage(
-                card.cardType,
-                card.numericValue
-              )}
-              alt={card.cardType}
-            />
-
-          )
-        )}
-
-      </div>
+      {/* Cards row */}
+      {hand.cards.length > 0 && (
+        <div className="cards-container">
+          {hand.cards.map((card: Card, ci: number) => (
+            <div
+              key={`${card.id}-${ci}`}
+              className={`panel-card panel-card--${card.cardType.toLowerCase()}`}
+              title={card.cardType === "NUMERIC" ? String(card.numericValue) : card.cardType}
+            >
+              {card.cardType === "NUMERIC"
+                ? card.numericValue
+                : cardTypeIcon(card.cardType)}
+            </div>
+          ))}
+        </div>
+      )}
 
     </div>
-
   );
 }
