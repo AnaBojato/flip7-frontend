@@ -1,171 +1,308 @@
-.menu-button {
+/* ═══════════════════════════════════════════════════════════════
+   FLIP7 — MenuButton · Character-Reactive Epic Styles
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── BASE BUTTON ──────────────────────────────────────────────── */
+.mbtn {
   position: relative;
-
-  border: none;
-  outline: none;
-  cursor: pointer;
-
-  overflow: hidden;
-
-  border-radius: 18px;
-
-  border: 1px solid rgba(233, 195, 73, 0.3);
-
-  background:
-    linear-gradient(
-      to bottom,
-      rgba(18, 18, 18, 0.5),
-      rgba(10, 10, 10, 0.82)
-    );
-
-  backdrop-filter: blur(10px);
-
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
-
-  display: flex;
-  justify-content: center;
+  display: inline-flex;
   align-items: center;
-  gap: 14px;
-
-  transition:
-    transform 0.25s ease,
-    border-color 0.25s ease,
-    box-shadow 0.25s ease,
-    background 0.25s ease;
-}
-
-.menu-button:hover {
-  transform: translateY(-3px);
-
-  border-color: rgba(233, 195, 73, 0.75);
-
-  box-shadow:
-    0 0 20px rgba(233, 195, 73, 0.15),
-    0 10px 35px rgba(0, 0, 0, 0.5);
-}
-
-.menu-button:active {
-  transform: scale(0.98);
-}
-
-.menu-button-overlay {
-  position: absolute;
-  inset: 0;
-
-  background:
-    linear-gradient(
-      120deg,
-      transparent 20%,
-      rgba(255, 255, 255, 0.08) 50%,
-      transparent 80%
-    );
-
-  transform: translateX(-120%);
-  transition: transform 0.8s ease;
-}
-
-.menu-button:hover .menu-button-overlay {
-  transform: translateX(120%);
-}
-
-/* =========================
-   PRIMARY BUTTON
-========================= */
-
-.primary-button {
   width: 100%;
-
-  min-height: 110px;
-
-  padding: 24px 30px;
-}
-
-.primary-text {
-  position: relative;
-  z-index: 2;
-
-  font-family: "Anton", sans-serif;
-
-  font-size: 38px;
-  letter-spacing: 2px;
-
-  color: #e9c349;
-
-  text-shadow:
-    0 0 10px rgba(233, 195, 73, 0.25),
-    0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-/* =========================
-   SECONDARY BUTTONS
-========================= */
-
-.secondary-button {
-  flex: 1;
-
-  min-height: 150px;
-
-  padding: 24px 16px;
-
-  flex-direction: column;
-}
-
-.secondary-text {
-  position: relative;
-  z-index: 2;
-
-  font-family: "Anton", sans-serif;
-
-  font-size: 22px;
-  line-height: 26px;
-
-  text-align: center;
-  letter-spacing: 1px;
-
-  color: #e9c349;
-
-  text-shadow:
-    0 0 8px rgba(233, 195, 73, 0.2),
-    0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-/* =========================
-   ICONS
-========================= */
-
-.menu-icon {
-  position: relative;
-  z-index: 2;
-
-  color: #e9c349;
-
-  flex-shrink: 0;
-
-  filter: drop-shadow(
-    0 0 8px rgba(233, 195, 73, 0.35)
-  );
-
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: 'Rajdhani', sans-serif;
+  overflow: hidden;
+  border-radius: 3px;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
   transition:
-    transform 0.25s ease,
-    filter 0.25s ease;
+    transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
+    filter 0.3s ease;
 }
 
-.primary-button .menu-icon {
+.mbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* ── PRIMARY ──────────────────────────────────────────────────── */
+.mbtn--primary {
+  height: 68px;
+}
+
+.mbtn--primary .mbtn-inner {
+  background: var(--btn-primary-bg, rgba(201,168,76,0.12));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid var(--accent);
+}
+
+/* ── SECONDARY ────────────────────────────────────────────────── */
+.mbtn--secondary {
+  height: 52px;
+  flex: 1;
+}
+
+.mbtn--secondary .mbtn-inner {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+/* ── INNER CONTENT ────────────────────────────────────────────── */
+.mbtn-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  height: 100%;
+  padding: 0 1.5rem;
+  border-radius: 3px;
+  transition:
+    background 0.4s ease,
+    border-color 0.4s ease;
+}
+
+/* ── ICON ─────────────────────────────────────────────────────── */
+.mbtn-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 36px;
   height: 36px;
+  border-radius: 50%;
+  background: var(--accent-dim, rgba(201,168,76,0.15));
+  transition:
+    background 0.4s ease,
+    transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
 }
 
-.secondary-button .menu-icon {
-  width: 30px;
-  height: 30px;
+.mbtn-icon {
+  color: var(--accent);
+  transition: color 0.4s ease, transform 0.4s ease;
 }
 
-.menu-button:hover .menu-icon {
-  transform: scale(1.12) rotate(-4deg);
+/* ── TEXT ─────────────────────────────────────────────────────── */
+.mbtn-text {
+  flex: 1;
+  font-size: clamp(0.8rem, 1.5vw, 0.95rem);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: #fff;
+  text-transform: uppercase;
+  text-align: left;
+  transition: color 0.3s ease, letter-spacing 0.4s ease;
+}
 
-  filter: drop-shadow(
-    0 0 12px rgba(233, 195, 73, 0.55)
+.mbtn--primary .mbtn-text {
+  font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+  letter-spacing: 0.28em;
+}
+
+/* ── ARROW ────────────────────────────────────────────────────── */
+.mbtn-arrow {
+  font-size: 1.4rem;
+  color: var(--accent);
+  opacity: 0;
+  transform: translateX(-8px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    color 0.4s ease;
+}
+
+/* ── ANIMATED BORDERS ─────────────────────────────────────────── */
+.mbtn-border {
+  position: absolute;
+  z-index: 3;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mbtn-border--top,
+.mbtn-border--bottom { height: 1.5px; left: 0; right: 0; }
+.mbtn-border--left,
+.mbtn-border--right  { width: 1.5px;  top: 0;  bottom: 0; }
+
+.mbtn-border--top    { top: 0;    transform: scaleX(0); transform-origin: left; }
+.mbtn-border--bottom { bottom: 0; transform: scaleX(0); transform-origin: right; }
+.mbtn-border--left   { left: 0;   transform: scaleY(0); transform-origin: bottom; }
+.mbtn-border--right  { right: 0;  transform: scaleY(0); transform-origin: top; }
+
+/* ── GLOW ─────────────────────────────────────────────────────── */
+.mbtn-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  background: radial-gradient(ellipse at 30% 50%, var(--accent-glow, rgba(201,168,76,0.3)), transparent 70%);
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+/* ── SHIMMER ──────────────────────────────────────────────────── */
+.mbtn-shimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  z-index: 4;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255,255,255,0.06) 40%,
+    rgba(255,255,255,0.15) 50%,
+    rgba(255,255,255,0.06) 60%,
+    transparent 100%
   );
+  pointer-events: none;
+  transition: none;
+}
+
+/* ── RIPPLE ───────────────────────────────────────────────────── */
+.mbtn-ripple {
+  position: absolute;
+  z-index: 5;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.6;
+  transform: translate(-50%, -50%) scale(0);
+  animation: rippleExpand 0.8s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes rippleExpand {
+  to { transform: translate(-50%, -50%) scale(18); opacity: 0; }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   HOVER STATES — generic base
+   ════════════════════════════════════════════════════════════════ */
+.mbtn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+.mbtn:hover .mbtn-glow         { opacity: 1; }
+.mbtn:hover .mbtn-arrow        { opacity: 1; transform: translateX(0); }
+.mbtn:hover .mbtn-text         { letter-spacing: 0.3em; }
+.mbtn:hover .mbtn-icon-wrap    { transform: rotate(15deg) scale(1.1); }
+
+.mbtn:hover .mbtn-border       { opacity: 1; }
+.mbtn:hover .mbtn-border--top  { transform: scaleX(1); transition: transform 0.3s ease; }
+.mbtn:hover .mbtn-border--bottom { transform: scaleX(1); transition: transform 0.3s 0.1s ease; }
+.mbtn:hover .mbtn-border--left   { transform: scaleY(1); transition: transform 0.3s 0.15s ease; }
+.mbtn:hover .mbtn-border--right  { transform: scaleY(1); transition: transform 0.3s 0.05s ease; }
+
+.mbtn:hover .mbtn-shimmer {
+  left: 150%;
+  transition: left 0.6s ease;
+}
+
+.mbtn:hover .mbtn--primary .mbtn-inner {
+  border-color: var(--accent);
+}
+
+/* ── CLICK STATE ──────────────────────────────────────────────── */
+.mbtn--clicked {
+  transform: scale(0.97) translateY(0) !important;
+  filter: brightness(1.25) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CHARACTER-SPECIFIC ANIMATIONS
+   ════════════════════════════════════════════════════════════════ */
+
+/* ──── SUNNY — Warm golden, rising anchor ──── */
+.mbtn--sunny:hover .mbtn-icon { transform: rotate(360deg); transition: transform 0.7s cubic-bezier(0.34,1.56,0.64,1); }
+.mbtn--sunny:hover .mbtn-icon-wrap { animation: sunnyPulse 1s ease infinite; }
+
+@keyframes sunnyPulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+  50%       { box-shadow: 0 0 0 8px transparent; }
+}
+
+/* ──── ZORO — Triple blade slash ──── */
+.mbtn--zoro:hover { transform: translateY(-3px) skewX(-2deg); }
+.mbtn--zoro:hover .mbtn-icon { animation: zoroSlash 0.4s ease; }
+.mbtn--zoro:hover .mbtn-text { text-shadow: 2px 0 0 var(--accent), -2px 0 0 var(--accent); letter-spacing: 0.35em; }
+
+@keyframes zoroSlash {
+  0%  { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(-6px) rotate(-20deg); }
+  75% { transform: translateX(6px) rotate(20deg); }
+  100% { transform: translateX(0) rotate(0deg); }
+}
+
+/* ──── LUFFY — Rubber stretch bounce ──── */
+.mbtn--luffy:hover { transform: translateY(-4px) scaleX(1.02); }
+.mbtn--luffy:hover .mbtn-icon { animation: luffyStretch 0.5s cubic-bezier(0.34,1.8,0.64,1); }
+.mbtn--luffy:hover .mbtn-text { animation: luffyBounce 0.5s ease; }
+.mbtn--luffy:hover .mbtn-inner { background: rgba(232,64,64,0.18) !important; }
+
+@keyframes luffyStretch {
+  0%  { transform: scaleX(0.7) scaleY(1.3); }
+  50% { transform: scaleX(1.3) scaleY(0.7); }
+  100% { transform: scaleX(1) scaleY(1); }
+}
+
+@keyframes luffyBounce {
+  0%, 100% { transform: translateY(0); }
+  40%       { transform: translateY(-4px); }
+  70%       { transform: translateY(2px); }
+}
+
+/* ──── USOPP — Sharp focus aim ──── */
+.mbtn--usopp:hover { transform: translateX(4px) translateY(-1px); }
+.mbtn--usopp:hover .mbtn-icon { animation: usoppAim 0.6s ease; }
+.mbtn--usopp:hover .mbtn-inner { border-style: dashed !important; }
+.mbtn--usopp:hover::after {
+  content: '●';
+  position: absolute;
+  right: 1rem;
+  font-size: 0.5rem;
+  color: var(--accent);
+  animation: usoppDot 0.4s 0.2s ease forwards;
+  opacity: 0;
+}
+
+@keyframes usoppAim {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(0.75) rotate(-10deg); }
+  60%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes usoppDot {
+  from { opacity: 0; transform: scale(0); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ──── JINBE — Ocean wave surge ──── */
+.mbtn--jinbe:hover { transform: translateY(-3px); }
+.mbtn--jinbe:hover .mbtn-icon-wrap { animation: jinbeWave 0.8s ease; }
+.mbtn--jinbe:hover .mbtn-glow { animation: jinbeCurrents 2s ease infinite; }
+
+@keyframes jinbeWave {
+  0%   { transform: translateX(0) scale(1); }
+  25%  { transform: translateX(-5px) scale(1.05); }
+  75%  { transform: translateX(5px) scale(0.95); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+@keyframes jinbeCurrents {
+  0%, 100% { opacity: 0.6; transform: scaleX(1); }
+  50%       { opacity: 1;   transform: scaleX(1.05); }
+}
+
+/* ── ACTIVE / PRESS ────────────────────────────────────────────── */
+.mbtn:active {
+  transform: scale(0.97) translateY(1px) !important;
+  transition: transform 0.1s ease !important;
 }
