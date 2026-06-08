@@ -1,6 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   FLIP7 · GRAND LINE · Ocean Night Menu (MUTAZIONE + GOLD HOVER + ICONS)
-   Paleta: Texto Blanco Fijo + Hover Dorado con Flecha e Iconos Animados
+   FLIP7 · GRAND LINE · Ocean Night Menu
    ═══════════════════════════════════════════════════════════════ */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@700&family=Rajdhani:wght@300;400;500;600;700&display=swap');
 
@@ -8,24 +7,15 @@
 
 /* ── TOKENS ─────────────────────────────────────────────────── */
 :root {
-  --moon:       #d8eaff;          /* moonlight white-blue */
+  --moon:      #d8eaff;
   --moon-dim:  rgba(216,234,255,0.18);
-  --gold:      #c8a84b;          /* old gold */
+  --gold:      #c8a84b;
   --gold-g:    rgba(200,168,75,0.45);
-  --gold-d:    rgba(200,168,75,0.12);
-  --navy:      #0d1b3e;          /* deep navy */
+  --navy:      #0d1b3e;
   --navy-mid:  #162447;
   --ocean:     #0a2a5e;
   --white:     #ffffff;
-  
-  /* Colores de Selección Premium */
-  --dawn-gold:   #f4af58;         /* Dorado amanecer brillante para el texto e indicador */
-  --box-bg-fixed: rgba(22, 36, 71, 0.65); /* Fondo de caja Mutazione fijo sin opacidades raras */
-  --box-border:   rgba(255, 255, 255, 0.15);
-  
-  /* Tonos del Amanecer para Iconos Especiales */
-  --dawn-sun:    #f3a953;
-  --dawn-glow:   #e27d3c;
+  --dawn-gold: #f4af58;
 }
 
 /* ══ ROOT ═════════════════════════════════════════════════════ */
@@ -75,8 +65,7 @@
 
 .mm-ov-left {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 0; left: 0;
   width: 45%;
   height: 100%;
   z-index: 2;
@@ -85,7 +74,7 @@
     rgba(4,10,28,.88) 0%,
     rgba(4,10,28,.70) 35%,
     rgba(4,10,28,.35) 70%,
-    transparent 100
+    transparent 100%
   );
 }
 
@@ -128,8 +117,7 @@
 .mm-wave-sparkles {
   position: absolute;
   bottom: 25%;
-  left: 0;
-  right: 0;
+  left: 0; right: 0;
   height: 20px;
   z-index: 5;
   pointer-events: none;
@@ -189,7 +177,7 @@
 }
 
 @keyframes zFloat {
-  0%   { opacity: 0;   transform: translateY(0)   scale(0.6); }
+  0%   { opacity: 0;   transform: translateY(0)    scale(0.6); }
   20%  { opacity: 0.7; }
   70%  { opacity: 0.4; }
   100% { opacity: 0;   transform: translateY(-28px) scale(1.1); }
@@ -251,151 +239,72 @@
   color: var(--moon);
   opacity: 0.55;
   text-transform: uppercase;
-  padding-left: 0.9rem;
+  padding-left: 2.5rem;
   padding-top: 0.6rem;
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   BOTONES DEFINITIVOS: MUTAZIONE + ICONOS AL LADO + HOVER DE LUZ
+   BOTONES DE IMAGEN
    ═══════════════════════════════════════════════════════════════ */
 
 .mm-nav {
   display: flex;
   flex-direction: column;
-  width: auto;
-  min-width: 230px;
-  gap: 10px;
+  gap: 0;                /* El PNG ya incluye su propio espaciado visual */
   align-items: flex-start;
   animation: navReveal 1.2s 0.9s cubic-bezier(0.22,1,0.36,1) both;
+  /* Compensamos el padding transparente izquierdo del PNG (~8% del ancho) */
+  margin-left: -2.2vw;
 }
 
-/* CONTENEDOR BASE DEL BOTÓN */
-.mm-btn {
-  position: relative;
+@keyframes navReveal {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.mm-imgbtn {
   background: none;
   border: none;
+  padding: 0;
   cursor: pointer;
-  padding: 10px 22px 10px 22px; 
-  display: flex;
-  align-items: center;    
-  justify-content: flex-start;
-  border-radius: 6px;
-  overflow: visible;      
-  gap: 12px;              /* Separación nítida entre el Icono y el Texto */
-  transition: transform 0.2s ease, padding-left 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+  display: block;
   -webkit-tap-highlight-color: transparent;
+  /* Ancho real visual del botón (el PNG tiene padding transparente ~10% a cada lado) */
+  width: clamp(260px, 28vw, 420px);
+  transition: transform 0.18s cubic-bezier(0.25,1,0.5,1), filter 0.18s ease;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
 }
 
-/* EL RECUADRO CONTENEDOR */
-.mm-btn-fill {
-  position: absolute;
-  inset: 0;
-  border-radius: 6px;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  opacity: 1;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
-  z-index: 1;
+.mm-imgbtn img {
+  width: 100%;
+  height: auto;
+  display: block;
+  /* Preserva la transparencia del PNG */
+  object-fit: contain;
+  /*añadimos padding a la parte inferior*/
+  padding-bottom: 1rem;
 }
 
-/* FLECHITA INDICADORA EN EL EXTREMO IZQUIERDO */
-.mm-btn::before {
-  content: "►";
-  font-size: 0.7rem;
-  color: var(--dawn-gold);
-  position: absolute;
-  left: 10px;               /* Posicionado de forma fija al inicio del recuadro */
-  opacity: 0;
-  transform: scale(0.5);
-  transition: opacity 0.25s ease, transform 0.25s ease;
-  z-index: 2;
+/* Hover: sube ligeramente y añade brillo dorado */
+.mm-imgbtn:hover {
+  transform: translateX(6px) translateY(-2px);
+  filter:
+    drop-shadow(0 0 10px rgba(200,168,75,0.55))
+    drop-shadow(0 4px 14px rgba(0,0,0,0.6))
+    brightness(1.12);
 }
 
-/* LOS ICONOS */
-.mm-icon {
-  position: relative;
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  color: rgba(216, 234, 255, 0.65);
-  transition: transform .3s ease, color .3s ease, filter .3s ease;
-  z-index: 2;
+/* Click / fire state */
+.mm-imgbtn--fire {
+  transform: scale(0.97) translateX(3px) !important;
+  filter:
+    drop-shadow(0 0 18px rgba(244,175,88,0.8))
+    brightness(1.2) !important;
 }
 
-/* Variación del icono para el botón principal */
-.mm-btn--primary .mm-icon {
-  color: var(--dawn-sun);
-  width: 18px;
-  height: 18px;
-  filter: drop-shadow(0 0 4px var(--dawn-glow));
+.mm-imgbtn:active {
+  transform: scale(0.97);
 }
-
-/* TEXTO DEL BOTÓN */
-.mm-btn-text {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--white);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  position: relative;
-  transition: color 0.25s ease, text-shadow 0.25s ease;
-}
-
-/* ── INTERACCIONES HOVER UNIFICADAS ── */
-.mm-btn:hover .mm-btn-fill,
-.mm-btn:focus-visible .mm-btn-fill,
-.mm-btn--active .mm-btn-fill {
-  border-color: rgba(244, 175, 88, 0.4);
-  box-shadow: 0 0 10px rgba(244, 175, 88, 0.15);
-}
-
-/* El aumento de padding desplaza limpiamente el icono y texto a la derecha */
-.mm-btn:hover,
-.mm-btn:focus-visible,
-.mm-btn--active {
-  padding-left: 32px; 
-}
-
-.mm-btn:hover .mm-btn-text,
-.mm-btn:focus-visible .mm-btn-text,
-.mm-btn--active .mm-btn-text {
-  color: rgb(255, 209, 152);
-  text-shadow: 0 0 8px rgba(244, 175, 88, 0.5);
-}
-
-/* Comportamiento dinámico de rotación/escala de los iconos en Hover */
-.mm-btn:hover .mm-icon,
-.mm-btn:focus-visible .mm-icon,
-.mm-btn--active .mm-icon {
-  color: #ffffff;
-  transform: scale(1.2) rotate(-5deg);
-}
-
-.mm-btn--primary:hover .mm-icon,
-.mm-btn--primary:focus-visible .mm-icon,
-.mm-btn--primary--active .mm-icon {
-  color: #ffffff;
-  transform: scale(1.25) rotate(10deg);
-}
-
-/* Despliegue de la flecha antes del icono */
-.mm-btn:hover::before,
-.mm-btn:focus-visible::before,
-.mm-btn--active::before {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.mm-btn:active {
-  transform: scale(0.98);
-}
-
-.mm-btn::after { display: none; }
 
 /* ══ EDITION STAMP ════════════════════════════════════════════ */
 .mm-stamp {
@@ -419,23 +328,24 @@
     gap: 1.8rem;
   }
 
-  .mm-logo-wrap { 
-    max-width: 70vw; 
+  .mm-logo-wrap {
+    max-width: 70vw;
     align-items: center;
   }
   .mm-logo { max-width: 240px; }
 
   .mm-nav {
     align-items: center;
-    min-width: 100%;
+    margin-left: 0;
+    width: 90vw;
   }
-  
-  .mm-btn {
-    padding: 10px 24px !important; /* Mantiene la simetría original en móviles sin deformarse */
+
+  .mm-imgbtn {
+    width: 85vw;
   }
-  
-  .mm-btn::before {
-    display: none !important; /* Desactivar flecha en pantallas táctiles */
+
+  .mm-imgbtn:hover {
+    transform: none;
   }
 
   .mm-corner, .mm-stamp, .mm-zzz { display: none !important; }

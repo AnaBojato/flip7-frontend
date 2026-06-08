@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./mainMenu.css";
 
-// Importación correcta de recursos desde src/assets
 import thousandVideo from "../../assets/videos/thousand.mp4";
-import logoInitImg from "../../assets/images/backgrounds/logoinit.png";
+import logoInitImg   from "../../assets/images/backgrounds/logoinit.png";
+import journeyImg    from "../../assets/images/buttons/journey.png";
+import archivesImg   from "../../assets/images/buttons/archives.png";
+import manualImg     from "../../assets/images/buttons/manual.png";
 
 interface Star { id: number; x: number; y: number; size: number; delay: number; dur: number }
-interface Wave { id: number; x: number; delay: number; dur: number; size: number }
+interface Wave  { id: number; x: number; delay: number; dur: number; size: number }
 
 export default function MainMenu() {
   const navigate  = useNavigate();
@@ -34,11 +36,11 @@ export default function MainMenu() {
     );
     setWaves(
       Array.from({ length: 8 }, (_, i) => ({
-        id:   i,
-        x:    Math.random() * 100,
+        id:    i,
+        x:     Math.random() * 100,
         delay: i * 0.4,
-        dur:  Math.random() * 2 + 3,
-        size: Math.random() * 30 + 15,
+        dur:   Math.random() * 2 + 3,
+        size:  Math.random() * 30 + 15,
       }))
     );
   }, []);
@@ -59,13 +61,12 @@ export default function MainMenu() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       t += 0.008;
 
-      /* Moonlight column on water */
       const mx = canvas.width * 0.72;
       const grad = ctx.createLinearGradient(mx, canvas.height * 0.5, mx, canvas.height);
-      grad.addColorStop(0, "rgba(180,210,255,0.0)");
+      grad.addColorStop(0,   "rgba(180,210,255,0.0)");
       grad.addColorStop(0.3, "rgba(180,210,255,0.06)");
       grad.addColorStop(0.6, "rgba(180,210,255,0.03)");
-      grad.addColorStop(1, "rgba(180,210,255,0.0)");
+      grad.addColorStop(1,   "rgba(180,210,255,0.0)");
       ctx.fillStyle = grad;
 
       const waveOffset = Math.sin(t) * 18;
@@ -80,7 +81,6 @@ export default function MainMenu() {
       ctx.closePath();
       ctx.fill();
 
-      /* Floating sparkles on water surface */
       for (let i = 0; i < 6; i++) {
         const sx = mx + Math.sin(t * 1.3 + i * 1.1) * (30 + i * 12);
         const sy = canvas.height * (0.55 + i * 0.04) + Math.sin(t + i) * 4;
@@ -103,15 +103,6 @@ export default function MainMenu() {
     setTimeout(() => { setClicked(null); action(); }, 320);
   };
 
-  /* ── Ripple ── */
-  const [ripples, setRipples] = useState<{id:number;x:number;y:number;btn:string}[]>([]);
-  const fireRipple = (e: React.MouseEvent<HTMLButtonElement>, btn: string) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    const id = Date.now();
-    setRipples(p => [...p, { id, x: e.clientX - r.left, y: e.clientY - r.top, btn }]);
-    setTimeout(() => setRipples(p => p.filter(x => x.id !== id)), 900);
-  };
-
   return (
     <div className="mm-root">
 
@@ -128,28 +119,28 @@ export default function MainMenu() {
       />
 
       {/* ── OVERLAYS ── */}
-      <div className="mm-ov-base"   />  {/* dark ocean tint */}
-      <div className="mm-ov-top"    />  {/* sky gradient top */}
-      <div className="mm-ov-bottom" />  {/* water depth bottom */}
-      <div className="mm-ov-left"   />  {/* left panel space */}
-      <div className="mm-ov-vignette" />
+      <div className="mm-ov-base"    />
+      <div className="mm-ov-top"     />
+      <div className="mm-ov-bottom"  />
+      <div className="mm-ov-left"    />
+      <div className="mm-ov-vignette"/>
 
       {/* ── CANVAS (moonlight shimmer) ── */}
       <canvas ref={canvasRef} className="mm-canvas" />
 
-      {/* ── STARS overlay (CSS animated) ── */}
+      {/* ── STARS overlay ── */}
       <div className="mm-stars" aria-hidden="true">
         {stars.map(s => (
           <span
             key={s.id}
             className="mm-star"
             style={{
-              left:               `${s.x}%`,
-              top:                `${s.y}%`,
-              width:              `${s.size}px`,
-              height:             `${s.size}px`,
-              animationDelay:     `${s.delay}s`,
-              animationDuration:  `${s.dur}s`,
+              left:              `${s.x}%`,
+              top:               `${s.y}%`,
+              width:             `${s.size}px`,
+              height:            `${s.size}px`,
+              animationDelay:    `${s.delay}s`,
+              animationDuration: `${s.dur}s`,
             }}
           />
         ))}
@@ -162,10 +153,10 @@ export default function MainMenu() {
             key={w.id}
             className="mm-wave-dot"
             style={{
-              left:               `${w.x}%`,
-              width:              `${w.size}px`,
-              animationDelay:     `${w.delay}s`,
-              animationDuration:  `${w.dur}s`,
+              left:              `${w.x}%`,
+              width:             `${w.size}px`,
+              animationDelay:    `${w.delay}s`,
+              animationDuration: `${w.dur}s`,
             }}
           />
         ))}
@@ -174,10 +165,10 @@ export default function MainMenu() {
       {/* ── SCANLINES ── */}
       <div className="mm-scanlines" aria-hidden="true" />
 
-      {/* ── CONTENT: logo top-left, buttons bottom-left ── */}
+      {/* ── CONTENT ── */}
       <div className={`mm-ui ${ready ? "mm-ui--ready" : ""}`}>
 
-        {/* LOGO — top left, above the sea horizon */}
+        {/* LOGO */}
         <div className="mm-logo-wrap">
           <img
             src={logoInitImg}
@@ -188,78 +179,39 @@ export default function MainMenu() {
           <p className="mm-logo-sub">GRAND LINE ADVENTURE</p>
         </div>
 
-        {/* BUTTONS — bottom left panel */}
+        {/* IMAGE BUTTONS */}
         <nav className="mm-nav" aria-label="Main menu">
 
-          {/* ── NEW JOURNEY ── primary */}
           <button
-            className={`mm-btn mm-btn--primary ${clicked === "j" ? "mm-btn--fire" : ""}`}
-            onClick={e => { fireRipple(e, "j"); handleClick("j", () => navigate("/players")); }}
+            className={`mm-imgbtn ${clicked === "j" ? "mm-imgbtn--fire" : ""}`}
+            onClick={() => handleClick("j", () => navigate("/players"))}
+            aria-label="New Journey"
           >
-            <span className="mm-btn-rope mm-btn-rope--l" aria-hidden="true" />
-            <span className="mm-btn-fill" />
-            <span className="mm-btn-shine" />
-            
-            {/* El icono y el texto quedan como hijos directos para respetar el display: flex del CSS */}
-            <svg className="mm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="5" r="2"/>
-              <path d="M12 7v13M5 10h14M5 10C5 15 8 18 12 20M19 10C19 15 16 18 12 20"/>
-            </svg>
-            <span className="mm-btn-text">NEW JOURNEY</span>
-            
-            <span className="mm-btn-rope mm-btn-rope--r" aria-hidden="true" />
-            {ripples.filter(r => r.btn === "j").map(r => (
-              <span key={r.id} className="mm-ripple" style={{ left: r.x, top: r.y }} />
-            ))}
+            <img src={journeyImg} alt="New Journey" draggable={false} />
           </button>
 
-          {/* ── MARINE ARCHIVES ── */}
           <button
-            className={`mm-btn mm-btn--secondary ${clicked === "a" ? "mm-btn--fire" : ""}`}
-            onClick={e => { fireRipple(e, "a"); handleClick("a", () => navigate("/archives")); }}
+            className={`mm-imgbtn ${clicked === "a" ? "mm-imgbtn--fire" : ""}`}
+            onClick={() => handleClick("a", () => navigate("/archives"))}
+            aria-label="Marine Archives"
           >
-            <span className="mm-btn-fill" />
-            <span className="mm-btn-shine" />
-            
-            <svg className="mm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-              <path d="M2 17l10 5 10-5"/>
-              <path d="M2 12l10 5 10-5"/>
-            </svg>
-            <span className="mm-btn-text">MARINE ARCHIVES</span>
-            
-            {ripples.filter(r => r.btn === "a").map(r => (
-              <span key={r.id} className="mm-ripple" style={{ left: r.x, top: r.y }} />
-            ))}
+            <img src={archivesImg} alt="Marine Archives" draggable={false} />
           </button>
 
-          {/* ── MANUAL ── */}
           <button
-            className={`mm-btn mm-btn--secondary ${clicked === "m" ? "mm-btn--fire" : ""}`}
-            onClick={e => { fireRipple(e, "m"); handleClick("m", () => navigate("/manual")); }}
+            className={`mm-imgbtn ${clicked === "m" ? "mm-imgbtn--fire" : ""}`}
+            onClick={() => handleClick("m", () => navigate("/manual"))}
+            aria-label="Manual"
           >
-            <span className="mm-btn-fill" />
-            <span className="mm-btn-shine" />
-            
-            <svg className="mm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
-              <line x1="10" y1="7" x2="16" y2="7"/>
-              <line x1="10" y1="11" x2="14" y2="11"/>
-            </svg>
-            <span className="mm-btn-text">MANUAL</span>
-            
-            {ripples.filter(r => r.btn === "m").map(r => (
-              <span key={r.id} className="mm-ripple" style={{ left: r.x, top: r.y }} />
-            ))}
+            <img src={manualImg} alt="Manual" draggable={false} />
           </button>
 
         </nav>
       </div>
 
-      {/* ── AMBIENT ZZZ (sleeping ship easter egg) ── */}
+      {/* ── AMBIENT ZZZ ── */}
       <div className="mm-zzz" aria-hidden="true">
-        <span style={{ animationDelay: "0s" }}>z</span>
+        <span style={{ animationDelay: "0s"   }}>z</span>
         <span style={{ animationDelay: "0.7s" }}>z</span>
         <span style={{ animationDelay: "1.4s" }}>Z</span>
       </div>
