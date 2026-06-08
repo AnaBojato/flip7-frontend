@@ -530,13 +530,11 @@ export default function GamePage() {
             {players.map((p, index) => {
               const hand = round?.hands.find(h => h.player.id === p.id);
 
-              const angle =
-                ((Math.PI * 2) / players.length) * index - Math.PI / 2;
-
-              const radius = players.length <= 5 ? 280 : 340;
-
-              const x = Math.cos(angle) * radius;
-              const y = Math.sin(angle) * radius;
+              const angle = ((Math.PI * 2) / players.length) * index - Math.PI / 2;
+              const radiusX = players.length <= 5 ? 220 : 260; // ancho del óvalo
+              const radiusY = players.length <= 5 ? 140 : 170; // alto del óvalo ← bájalo para aplastar
+              const x = Math.cos(angle) * radiusX;
+              const y = Math.sin(angle) * radiusY -17;
 
               return (
                 <div
@@ -559,6 +557,7 @@ export default function GamePage() {
                     }
                     isActive={currentPlayer?.id === p.id}
                     isCurrentUser={false}
+                    playerIndex={index}
                   />
                 </div>
               );
@@ -567,8 +566,7 @@ export default function GamePage() {
             <div className="table-center">
               <div className="table-oval">
 
-                {/* DEJA AQUÍ TODO TU CÓDIGO DEL DECK */}
-                {/* NO BORRES NADA DE table-center */}
+                {/* DEJA AQUÍ TODO EL CÓDIGO DEL DECK */}
 
                 <div
                   className={`deck-stack ${isShowingCard ? "deck-dealing" : ""}`}
@@ -610,16 +608,6 @@ export default function GamePage() {
 
           {/* ── Bottom: current player hand + actions ── */}
           <div className="bottom-area">
-            {currentHand && (
-              <div className="hand-area">
-                <PlayerPanel
-                  hand={currentHand}
-                  isActive={true}
-                  isCurrentUser={true}
-                />
-              </div>
-            )}
-
             <div className="actions">
               {hasPendingFreeze && currentPlayer && (
                 <button
@@ -667,6 +655,7 @@ export default function GamePage() {
         </div>{/* end .game-table */}
 
         {/* ── Scoreboard ── */}
+        {/*
         <aside className="leaderboard">
           <div className="leaderboard-header">
             <Trophy size={18} />
@@ -733,12 +722,12 @@ export default function GamePage() {
             })}
           </div>
         </aside>
-
+        */}
       </div>{/* end .game-layout */}
     </main>
   );
 }
-
+{/*
 function cardTypeIcon(cardType: string) {
   switch (cardType) {
     case "FREEZE":        return "❄";
@@ -748,7 +737,7 @@ function cardTypeIcon(cardType: string) {
     default:              return "?";
   }
 }
-
+*/}
 function FlyingCardEl({ flyingCard }: { flyingCard: FlyingCard }) {
   const img = getCardImage(flyingCard.card.cardType, flyingCard.card.numericValue);
   return (

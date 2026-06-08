@@ -1,187 +1,201 @@
-/* ── PlayerBoard.css — Pirate Ship Edition ───────────────────────────────── */
+/* ── PlayerBoard.css — Pirate Ship Edition ─────────────────────────────── */
 
-.player-board {
-  background: rgba(8, 22, 12, 0.88);
-  border: 1.5px solid rgba(180, 140, 60, 0.3);
-  border-radius: 16px;
-  padding: 10px 12px;
+.pb {
+  background: rgba(8, 18, 28, 0.90);
+  border: 1.5px solid rgba(180, 140, 60, 0.35);
+  border-radius: 12px;
+  padding: 7px 9px 6px;
   backdrop-filter: blur(14px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
   transition: border-color 0.25s, box-shadow 0.25s;
   width: 100%;
-  min-width: unset;
+  transform: scale(0.82);
+  transform-origin: center;
 }
 
-/* Active player glow */
-.player-board--active {
-  border-color: rgba(201, 168, 76, 0.7);
+.pb--active {
+  border-color: rgba(201, 168, 76, 0.75);
   box-shadow:
     0 0 0 1px rgba(201, 168, 76, 0.2),
     0 4px 24px rgba(0, 0, 0, 0.6),
-    0 0 20px rgba(201, 168, 76, 0.2);
-  animation: boardPulse 2s ease-in-out infinite;
+    0 0 22px rgba(201, 168, 76, 0.28);
+  animation: pbPulse 2s ease-in-out infinite;
 }
-@keyframes boardPulse {
+@keyframes pbPulse {
   0%, 100% { box-shadow: 0 0 0 1px rgba(201,168,76,0.2), 0 4px 24px rgba(0,0,0,.6), 0 0 14px rgba(201,168,76,.15); }
-  50%       { box-shadow: 0 0 0 1px rgba(201,168,76,0.4), 0 4px 24px rgba(0,0,0,.6), 0 0 28px rgba(201,168,76,.35); }
+  50%       { box-shadow: 0 0 0 1px rgba(201,168,76,0.45), 0 4px 24px rgba(0,0,0,.6), 0 0 30px rgba(201,168,76,.4); }
 }
 
-/* Current user panel — slightly wider, bottom-docked */
-.player-board--you {
-  min-width: 260px;
-  border-color: rgba(201, 168, 76, 0.5);
-}
-
-.player-board--busted {
+.pb--busted {
   opacity: 0.5;
-  border-color: rgba(192, 57, 43, 0.35);
+  border-color: rgba(192, 57, 43, 0.4);
 }
-
-.player-board--stood {
-  border-color: rgba(39, 174, 96, 0.4);
+.pb--stood {
+  border-color: rgba(39, 174, 96, 0.45);
+}
+.pb--you {
+  border-color: rgba(201, 168, 76, 0.55);
 }
 
 /* ── Header ─────────────────────────────────────────────────────────────── */
-.player-header {
+.pb-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
 }
 
-.player-info {
+/* Avatar */
+.pb-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.pb-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2.5px solid rgba(201, 168, 76, 0.8);
+  box-shadow:
+    0 0 0 2.5px rgba(10, 18, 28, 0.9),
+    0 0 10px rgba(201, 168, 76, 0.3);
+  display: block;
+}
+
+.pb-avatar-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(201, 168, 76, 0.6);
+  animation: ringPulse 1.4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes ringPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.08); }
+}
+
+/* Info */
+.pb-info {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
   min-width: 0;
 }
 
-.player-name {
-  font-family: 'Bebas Neue', 'DM Sans', sans-serif;
-  font-size: 1rem;
-  letter-spacing: 1.5px;
+.pb-name {
+  font-family: 'DM Sans', 'Hanken Grotesk', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
   color: #f0ead6;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1;
-}
-
-.player-board--you .player-name {
-  color: #e8c96a;
-  font-size: 1.1rem;
+  line-height: 1.1;
 }
 
 /* Status badge */
-.player-status-badge {
+.pb-status {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 0.72rem;
+  gap: 5px;
+  font-size: 0.58rem;
   font-weight: 600;
-  padding: 2px 7px;
+  padding: 1px 6px;
   border-radius: 999px;
   width: fit-content;
-  line-height: 1.4;
+  line-height: 1.5;
+  letter-spacing: 0.2px;
 }
 
-.player-status-badge.active {
-  background: rgba(34, 197, 94, 0.15);
+.pb-status--active {
+  background: rgba(34, 197, 94, 0.18);
   color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.25);
 }
-
-.player-status-badge.busted {
-  background: rgba(239, 68, 68, 0.15);
+.pb-status--busted {
+  background: rgba(239, 68, 68, 0.18);
   color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.25);
 }
-
-.player-status-badge.stood {
-  background: rgba(59, 130, 246, 0.15);
+.pb-status--stood {
+  background: rgba(59, 130, 246, 0.18);
   color: #60a5fa;
+  border: 1px solid rgba(96, 165, 250, 0.25);
+}
+.pb-status--waiting {
+  background: rgba(120, 120, 120, 0.15);
+  color: rgba(200, 200, 200, 0.55);
+  border: 1px solid rgba(200, 200, 200, 0.1);
 }
 
-/* Score pill */
-.player-score {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.15rem;
-  letter-spacing: 1px;
-  color: #e8c96a;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(201, 168, 76, 0.25);
-  border-radius: 8px;
-  padding: 2px 10px;
-  min-width: 34px;
-  text-align: center;
+.pb-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ade80;
+  animation: dotBlink 1.2s ease-in-out infinite;
   flex-shrink: 0;
+}
+@keyframes dotBlink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.3; transform: scale(0.6); }
+}
+
+/* Score circle */
+.pb-score {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1a6fa8, #1558a0);
+  border: 2px solid rgba(26, 111, 168, 0.55);
+  box-shadow: 0 2px 8px rgba(26, 111, 168, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-/* ── Cards row ───────────────────────────────────────────────────────────── */
-.cards-container {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  padding-bottom: 2px;
-  scrollbar-width: none;
-}
-.cards-container::-webkit-scrollbar { display: none; }
-
-/* Compact card chip */
-.panel-card {
-  flex-shrink: 0;
-  min-width: 34px;
-  height: 44px;
-  border-radius: 7px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1rem;
+  font-family: 'Bebas Neue', 'DM Sans', sans-serif;
+  font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 0.5px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  cursor: default;
-  transition: transform 0.15s;
-  padding: 0 6px;
+  color: #e8f4fc;
 }
-.panel-card:hover {
-  transform: translateY(-3px) scale(1.08);
+
+/* ── Cards ───────────────────────────────────────────────────────────────── */
+.pb-cards {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+
+/* Smaller cards — ~46px wide */
+.pb-card-img {
+  width: 34px;
+  height: auto;
+  border-radius: 6px;
+  object-fit: contain;
+  border: 1px solid rgba(201, 168, 76, 0.28);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.55),
+    0 0 4px rgba(201, 168, 76, 0.1);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  flex-shrink: 0;
+  animation: cardDeal 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.pb-card-img:hover {
+  transform: translateY(-4px) scale(1.08);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.65),
+    0 0 10px rgba(201, 168, 76, 0.3);
   z-index: 5;
   position: relative;
 }
 
-.panel-card--numeric {
-  background: linear-gradient(145deg, #1e4530, #122818);
-  color: #e8c96a;
-  border-color: rgba(201, 168, 76, 0.4);
-  font-size: 1.1rem;
-}
-
-.panel-card--freeze {
-  background: linear-gradient(145deg, #0d4f78, #083a5a);
-  color: #aed6f1;
-  border-color: rgba(41, 128, 185, 0.4);
-}
-
-.panel-card--flip_three {
-  background: linear-gradient(145deg, #8a5a08, #6b4506);
-  color: #fdebd0;
-  border-color: rgba(214, 137, 16, 0.4);
-}
-
-.panel-card--second_chance {
-  background: linear-gradient(145deg, #6c3483, #4a235a);
-  color: #d7bde2;
-  border-color: rgba(142, 68, 173, 0.4);
-}
-
-.panel-card--multiplier {
-  background: linear-gradient(145deg, #1a5276, #12395a);
-  color: #85c1e9;
-  border-color: rgba(36, 113, 163, 0.4);
+@keyframes cardDeal {
+  from { opacity: 0; transform: translateY(10px) scale(0.82); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
 }

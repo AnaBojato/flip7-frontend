@@ -1,65 +1,83 @@
 // components/PlayerBoard/PlayerBoard.tsx
-import { Skull, Hand, Trophy } from "lucide-react";
-//import { getCardImage } from "../../utils/cardImages";
+import img1  from "../../assets/characters/img1.jpg";
+import img2  from "../../assets/characters/img2.jpg";
+import img3  from "../../assets/characters/img3.jpg";
+import img4  from "../../assets/characters/img4.jpg";
+import img5  from "../../assets/characters/img5.jpg";
+import img6  from "../../assets/characters/img6.jpg";
+import img7  from "../../assets/characters/img7.jpg";
+import img8  from "../../assets/characters/img8.jpg";
+import img9  from "../../assets/characters/img9.jpg";
+import img10 from "../../assets/characters/img10.jpg";
+
+import { getCardImage } from "../../utils/cardImages";
 import type { PlayerHand, Card } from "../../services/types";
 import "./PlayerBoard.css";
+
+const characterImages: string[] = [
+  img1, img2, img3, img4, img5,
+  img6, img7, img8, img9, img10,
+];
 
 type Props = {
   hand: PlayerHand;
   isActive?: boolean;
   isCurrentUser?: boolean;
+  /** índice 0-based del jugador en el array players[] — determina el avatar */
+  playerIndex?: number;
 };
 
-function cardTypeIcon(cardType: string) {
-  switch (cardType) {
-    case "FREEZE":        return "❄";
-    case "FLIP_THREE":    return "🔄";
-    case "SECOND_CHANCE": return "🛡";
-    case "MULTIPLIER":    return "×2";
-    default:              return "?";
-  }
-}
+export default function PlayerBoard({
+  hand,
+  isActive = false,
+  isCurrentUser = false,
+  playerIndex = 0,
+}: Props) {
+  const { player, cards, busted, stood } = hand;
 
-export default function PlayerPanel({ hand, isActive = false, isCurrentUser = false }: Props) {
-  const statusCls = hand.busted ? "busted" : hand.stood ? "stood" : "active";
+  const avatarSrc = characterImages[playerIndex % characterImages.length];
+
+  const statusLabel = busted ? "Busted" : stood ? "Stood" : isActive ? "Playing" : "Waiting";
+  const statusCls   = busted ? "busted" : stood ? "stood"  : isActive ? "active"  : "waiting";
 
   return (
     <div className={[
-      "player-board",
-      isActive      ? "player-board--active" : "",
-      isCurrentUser ? "player-board--you"    : "",
-      hand.busted   ? "player-board--busted" : "",
-      hand.stood    ? "player-board--stood"  : "",
+      "pb",
+      isActive      ? "pb--active" : "",
+      busted        ? "pb--busted" : "",
+      stood         ? "pb--stood"  : "",
+      isCurrentUser ? "pb--you"    : "",
     ].filter(Boolean).join(" ")}>
 
-      {/* Header row */}
-      <div className="player-header">
-        <div className="player-info">
-          <span className="player-name">
-            {isCurrentUser ? "YOU" : hand.player.name}
-          </span>
-          <div className={`player-status-badge ${statusCls}`}>
-            {hand.busted && <><Skull size={11} /> Bust</>}
-            {hand.stood  && <><Hand  size={11} /> Stand</>}
-            {!hand.busted && !hand.stood && <><Trophy size={11} /> Playing</>}
-          </div>
+      <div className="pb-header">
+        <div className="pb-avatar-wrap">
+          <img src={avatarSrc} alt={player.name} className="pb-avatar" />
+          {isActive && <span className="pb-avatar-ring" />}
         </div>
-        <span className="player-score">{hand.scoreEarned}</span>
+
+        <div className="pb-info">
+          <span className="pb-name">
+            {isCurrentUser ? "YOU" : player.name}
+          </span>
+          <span className={`pb-status pb-status--${statusCls}`}>
+            {statusLabel === "Playing" && <span className="pb-dot" />}
+            {statusLabel}
+          </span>
+        </div>
+
+        <div className="pb-score">{player.totalScore}</div>
       </div>
 
-      {/* Cards row */}
-      {hand.cards.length > 0 && (
-        <div className="cards-container">
-          {hand.cards.map((card: Card, ci: number) => (
-            <div
-              key={`${card.id}-${ci}`}
-              className={`panel-card panel-card--${card.cardType.toLowerCase()}`}
+      {cards.length > 0 && (
+        <div className="pb-cards">
+          {cards.map((card: Card, i: number) => (
+            <img
+              key={`${card.id}-${i}`}
+              className="pb-card-img"
+              src={getCardImage(card.cardType, card.numericValue)}
+              alt={card.cardType === "NUMERIC" ? String(card.numericValue) : card.cardType}
               title={card.cardType === "NUMERIC" ? String(card.numericValue) : card.cardType}
-            >
-              {card.cardType === "NUMERIC"
-                ? card.numericValue
-                : cardTypeIcon(card.cardType)}
-            </div>
+            />
           ))}
         </div>
       )}
