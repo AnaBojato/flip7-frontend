@@ -22,6 +22,9 @@ import PlayerPanel    from "../../components/PlayerBoard/PlayerBoard";
 import FreezeModal    from "../../components/Modals/FreezeModal/FreezeModal";
 import FlipThreeModal from "../../components/Modals/FlipThreeModal/FlipThreeModal";
 import { getCardImage } from "../../utils/cardImages";
+import Flip7Logo from "../../assets/images/backgrounds/logoinit.png";
+import drawBtnImg from "../../assets/images/buttons/draw.png";
+import standBtnImg from "../../assets/images/buttons/stand.png";
 
 import type {
   Player, RoundResponse, TurnResponse, Card, PlayerHand,
@@ -70,19 +73,21 @@ export default function GamePage() {
   const location = useLocation();
   const gameId = location.state?.gameId;
 
-  const [players,           setPlayers]           = useState<Player[]>([]);
-  const [round,             setRound]             = useState<RoundResponse | null>(null);
-  const [currentPlayer,     setCurrentPlayer]     = useState<Player | null>(null);
-  const [revealedCard,      setRevealedCard]      = useState<Card | null>(null);
-  const [isShowingCard,     setIsShowingCard]     = useState(false);
-  const [activeModal,       setActiveModal]       = useState<ModalState>("none");
-  const [gameOver,          setGameOver]          = useState(false);
-  const [winner,            setWinner]            = useState<Player | null>(null);
-  const [roundSummary,      setRoundSummary]      = useState<RoundSummaryPlayer[] | null>(null);
-  const [isRoundTransition, setIsRoundTransition] = useState(false);
-  const [lastEvent,         setLastEvent]         = useState<string | null>(null);
-  const [flyingCards,       setFlyingCards]       = useState<FlyingCard[]>([]);
-  const [secondChanceActive,setSecondChanceActive]= useState(false);
+  const [players,              setPlayers]              = useState<Player[]>([]);
+  const [round,                setRound]                = useState<RoundResponse | null>(null);
+  const [currentPlayer,        setCurrentPlayer]        = useState<Player | null>(null);
+  const [revealedCard,         setRevealedCard]         = useState<Card | null>(null);
+  const [isShowingCard,        setIsShowingCard]        = useState(false);
+  const [activeModal,          setActiveModal]          = useState<ModalState>("none");
+  const [gameOver,             setGameOver]             = useState(false);
+  const [winner,               setWinner]               = useState<Player | null>(null);
+  const [roundSummary,         setRoundSummary]         = useState<RoundSummaryPlayer[] | null>(null);
+  // FIX: guarda el número de la ronda que ACABA de terminar
+  const [completedRoundNumber, setCompletedRoundNumber] = useState<number | null>(null);
+  const [isRoundTransition,    setIsRoundTransition]    = useState(false);
+  const [lastEvent,            setLastEvent]            = useState<string | null>(null);
+  const [flyingCards,          setFlyingCards]          = useState<FlyingCard[]>([]);
+  const [secondChanceActive,   setSecondChanceActive]   = useState(false);
 
   const actionInProgressRef = useRef(false);
   const deckRef  = useRef<HTMLDivElement>(null);
@@ -162,7 +167,7 @@ export default function GamePage() {
   // ─── Limpiar badge ────────────────────────────────────────────────────────
   useEffect(() => {
     if (!lastEvent) return;
-    const t = setTimeout(() => setLastEvent(null), 2200);
+    const t = setTimeout(() => setLastEvent(null), 1200);
     return () => clearTimeout(t);
   }, [lastEvent]);
 
@@ -208,6 +213,10 @@ export default function GamePage() {
     }
 
     if (result.status === "ROUND_FINISHED") {
+      // FIX: captura el número de la ronda actual ANTES de hacer el fetch
+      // porque después setRound() va a pisar el valor con la nueva ronda
+      const justFinishedRoundNumber = round?.roundNumber ?? null;
+
       const [finishedRound, updatedPlayers] = await Promise.all([
         getRound(gameId).catch(() => null),
         getPlayers(gameId).catch(() => null),
@@ -227,6 +236,9 @@ export default function GamePage() {
             stood:       hand?.stood  ?? false,
           };
         });
+
+        // FIX: guarda el número correcto y luego muestra el summary
+        setCompletedRoundNumber(justFinishedRoundNumber);
         setRoundSummary(summary);
       }
       setCurrentPlayer(null);
@@ -292,21 +304,13 @@ export default function GamePage() {
           setSecondChanceActive(true);
         }
 
-        setTimeout(() => {
-          if (result.drawnCard && result.currentPlayer) {
-            triggerFlyingCard(result.drawnCard, result.currentPlayer.id);
-          } else if (result.drawnCard) {
-            triggerFlyingCard(result.drawnCard, currentPlayer.id);
-          }
-        }, 1800);
-
         setTimeout(async () => {
           setIsShowingCard(false);
           setRevealedCard(null);
           setSecondChanceActive(false);
           await handleTurnResult(result);
           actionInProgressRef.current = false;
-        }, 2500);
+        }, 1200);
       } else {
         await handleTurnResult(result);
         actionInProgressRef.current = false;
@@ -365,6 +369,8 @@ export default function GamePage() {
   const handleContinueRound = async () => {
     setIsRoundTransition(true);
     setRoundSummary(null);
+    // FIX: limpia el número guardado
+    setCompletedRoundNumber(null);
     actionInProgressRef.current = true;
     try {
       const [updatedPlayers, newRound] = await Promise.all([
@@ -402,24 +408,12 @@ export default function GamePage() {
   };
 
   // ─── Distribute players around the table ──────────────────────────────────
-  // Positions: top-center, left-top, right-top, left-bottom, right-bottom
-  // The "YOU" (local player) always appears at bottom-center
   const tablePositions = ["top", "left-top", "right-top", "left-bottom", "right-bottom"] as const;
-
-  // Sort players by totalScore descending for scoreboard
   const sortedForScoreboard = [...players].sort((a, b) => b.totalScore - a.totalScore);
-
-  // For the table layout we use original order, excluding the current user if needed
-  // We just map players to positions (up to 5 shown around the table)
   const tablePlayers = players.slice(0, 5);
 
   return (
     <main className="game-page">
-
-      {/* Flying cards */}
-      {flyingCards.map(fc => (
-        <FlyingCardEl key={fc.id} flyingCard={fc} />
-      ))}
 
       {/* ── Modal Freeze ── */}
       {activeModal === "freeze" && currentPlayer && (
@@ -445,7 +439,8 @@ export default function GamePage() {
           <div className="game-modal round-summary-modal">
             <div className="modal-header">
               <RefreshCw size={22} className="modal-icon icon-spin-once" />
-              <h2>Round {round?.roundNumber} — Results</h2>
+              {/* FIX: usa completedRoundNumber en lugar de round?.roundNumber */}
+              <h2>Round {completedRoundNumber} — Results</h2>
             </div>
             <div className="summary-list">
               {roundSummary
@@ -459,10 +454,11 @@ export default function GamePage() {
                   >
                     <span className="summary-pos">#{i + 1}</span>
                     <span className="summary-name">{p.name}</span>
+                    {/* FIX: layout limpio — icono + puntos ganados | total pts */}
                     <span className="summary-earned">
                       {p.busted
-                        ? <><Skull size={14} /> Bust</>
-                        : <><CheckCircle2 size={14} /> +{p.scoreEarned}</>}
+                        ? <><Skull size={14} />Bust</>
+                        : <><CheckCircle2 size={14} />+</>}
                     </span>
                     <span className="summary-total">{p.totalScore} pts</span>
                   </div>
@@ -499,8 +495,11 @@ export default function GamePage() {
       {/* ── Header ── */}
       <header className="game-header">
         <div className="header-brand">
-          <Swords size={28} className="brand-icon" />
-          <h1 className="game-title">FLIP<span>7</span></h1>
+          <img
+            src={Flip7Logo}
+            alt="Logo"
+            className="Flip7-logo"
+          />
         </div>
         <div className="header-center">
           <div className="round-badge">
@@ -531,10 +530,10 @@ export default function GamePage() {
               const hand = round?.hands.find(h => h.player.id === p.id);
 
               const angle = ((Math.PI * 2) / players.length) * index - Math.PI / 2;
-              const radiusX = players.length <= 5 ? 220 : 260; // ancho del óvalo
-              const radiusY = players.length <= 5 ? 140 : 170; // alto del óvalo ← bájalo para aplastar
+              const radiusX = players.length <= 5 ? 220 : 260;
+              const radiusY = players.length <= 5 ? 140 : 170;
               const x = Math.cos(angle) * radiusX;
-              const y = Math.sin(angle) * radiusY -17;
+              const y = Math.sin(angle) * radiusY - 17;
 
               return (
                 <div
@@ -565,8 +564,6 @@ export default function GamePage() {
 
             <div className="table-center">
               <div className="table-oval">
-
-                {/* DEJA AQUÍ TODO EL CÓDIGO DEL DECK */}
 
                 <div
                   className={`deck-stack ${isShowingCard ? "deck-dealing" : ""}`}
@@ -632,20 +629,19 @@ export default function GamePage() {
               {!hasPendingFreeze && !hasPendingFlipThree && (
                 <>
                   <button
-                    className="action-btn btn-draw"
+                    className="image-action-btn"
                     onClick={handleDraw}
                     disabled={actionsDisabled}
                   >
-                    <Hand size={20} />
-                    Draw
+                    <img src={drawBtnImg} alt="Draw" />
                   </button>
+
                   <button
-                    className="action-btn btn-stand"
+                    className="image-action-btn"
                     onClick={handleStand}
                     disabled={actionsDisabled}
                   >
-                    <Flag size={20} />
-                    Stand
+                    <img src={standBtnImg} alt="Stand" />
                   </button>
                 </>
               )}
@@ -654,90 +650,11 @@ export default function GamePage() {
 
         </div>{/* end .game-table */}
 
-        {/* ── Scoreboard ── */}
-        {/*
-        <aside className="leaderboard">
-          <div className="leaderboard-header">
-            <Trophy size={18} />
-            <span>Scoreboard</span>
-          </div>
-          <div className="leaderboard-list">
-            {sortedForScoreboard.map((player, index) => {
-              const isCurrent = currentPlayer?.id === player.id;
-              const hand: PlayerHand | undefined = round?.hands.find(
-                h => h.player.id === player.id
-              );
-              const isBusted = hand?.busted ?? false;
-              const isStood  = hand?.stood  ?? false;
-
-              return (
-                <div
-                  key={player.id}
-                  className={[
-                    "lb-row",
-                    isCurrent ? "lb-active"  : "",
-                    isBusted  ? "lb-busted"  : "",
-                    isStood   ? "lb-stood"   : "",
-                  ].filter(Boolean).join(" ")}
-                >
-                  <div className="lb-top">
-                    <span className="lb-rank">
-                      {index === 0 ? <Crown size={13} /> : `#${index + 1}`}
-                    </span>
-                    <span className="lb-name">{player.name}</span>
-                    <span className="lb-status">
-                      {isBusted && <Skull size={13} />}
-                      {isStood  && <CheckCircle2 size={13} />}
-                      {!isBusted && !isStood && hand?.cards.some(
-                        c => c.cardType === "SECOND_CHANCE"
-                      ) && <Shield size={13} className="sc-icon" />}
-                      {isCurrent && !isBusted && !isStood && (
-                        <span className="lb-active-dot" />
-                      )}
-                    </span>
-                    <span className="lb-score">{player.totalScore}</span>
-                  </div>
-
-                  {hand && hand.cards.length > 0 && (
-                    <div className="lb-cards">
-                      {hand.cards.map((card, ci) => (
-                        <div
-                          key={`${card.id}-${ci}`}
-                          className={`lb-card lb-card--${card.cardType.toLowerCase()}`}
-                          title={
-                            card.cardType === "NUMERIC"
-                              ? String(card.numericValue)
-                              : card.cardType
-                          }
-                        >
-                          {card.cardType === "NUMERIC"
-                            ? card.numericValue
-                            : cardTypeIcon(card.cardType)}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </aside>
-        */}
       </div>{/* end .game-layout */}
     </main>
   );
 }
-{/*
-function cardTypeIcon(cardType: string) {
-  switch (cardType) {
-    case "FREEZE":        return "❄";
-    case "FLIP_THREE":    return "🔄";
-    case "SECOND_CHANCE": return "🛡";
-    case "MULTIPLIER":    return "×2";
-    default:              return "?";
-  }
-}
-*/}
+
 function FlyingCardEl({ flyingCard }: { flyingCard: FlyingCard }) {
   const img = getCardImage(flyingCard.card.cardType, flyingCard.card.numericValue);
   return (

@@ -125,6 +125,35 @@
   border: 1px solid rgba(255,255,255,0.08);
 }
 
+/* lOGO */
+
+.Flip7-logo {
+  position: fixed;
+  top: 12px;
+  left: 18px;
+
+  height: 50px;
+  width: auto;
+
+  z-index: 100;
+  transition:
+    transform .2s ease,
+    filter .2s ease;
+
+  filter:
+    drop-shadow(0 0 8px rgba(255,215,120,.35))
+    drop-shadow(0 0 18px rgba(255,180,50,.2));
+}
+
+.Flip7-logo:hover {
+  transform: scale(1.08);
+
+  filter:
+    drop-shadow(0 0 12px rgba(255,215,120,.6))
+    drop-shadow(0 0 24px rgba(255,180,50,.35));
+}
+
+
 /* ── Layout ─────────────────────────────────────────────────────────────── */
 .game-layout {
   position: relative;
@@ -180,17 +209,34 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(10, 28, 15, 0.8);
-  border: 1px solid rgba(180, 140, 60, 0.3);
-  border-radius: var(--radius-btn);
-  padding: 0.4rem 0.9rem;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  width: fit-content;
-  backdrop-filter: blur(8px);
-}
-.current-turn-banner strong { color: var(--gold-light); font-weight: 600; }
 
+  background: rgba(86, 62, 17, 0.88);
+  border: 1px solid rgba(201, 168, 76, 0.5);
+  border-radius: 30px;
+
+  padding: 0.55rem 1rem;
+  font-size: 0.9rem;
+
+  color: #d8c38a;
+
+  backdrop-filter: blur(8px);
+
+  box-shadow:
+    0 0 12px rgba(201, 168, 76, 0.18),
+    0 0 24px rgba(201, 168, 76, 0.08);
+
+  width: fit-content;
+
+  transform: translateY(20px); /* cámbialo a 80, 90, 100, etc. */
+}
+.current-turn-banner strong {
+  color: #f7d46a;
+  font-weight: 700;
+
+  text-shadow:
+    0 0 6px rgba(247, 212, 106, 0.5),
+    0 0 12px rgba(247, 212, 106, 0.25);
+}
 /* ── Oval central ───────────────────────────────────────────────────────── */
 .table-center {
   display: flex;
@@ -228,7 +274,7 @@
   content: "";
   position: absolute;
   left: 50%;
-  bottom: -20px;
+  bottom: 0px;
 
   width: 220px;
   height: 320px;
@@ -281,69 +327,76 @@
 }
 
 /* Shadow cards behind */
-.deck-card--3 {
-  transform: translate(0px, 5px);
-  background: linear-gradient(135deg, #26221D, #26221D);
-  z-index: 1;
-}
-
-.deck-card--2 {
-  transform: translate(0px, 2.5px);
-  background: linear-gradient(135deg, #403631, #403631);
-  z-index: 2;
-}
 
 .deck-card--1 {
   position: relative;
 
-  background: url("../../assets/cards/normalCards/cardBack.svg")
+  background: url("../../assets/cards/normalCards/cardBack.png")
     center center / cover no-repeat;
 
-  border: 1px solid rgba(130, 220, 255, 0.6);
   border-radius: 4px;
-  overflow: hidden;
-
-  z-index: 10;
 
   box-shadow:
-    0 0 8px rgba(80,220,255,0.5),
-    0 0 18px rgba(80,220,255,0.35),
-    0 0 35px rgba(80,220,255,0.2);
+    0 0 4px rgba(255, 255, 255, 0.995),
+    0 0 12px rgba(255, 226, 181, 0.8),
+    0 0 20px rgba(255, 179, 87, 0.7),
+    0 0 28px rgba(255, 140, 39, 0.5);
+
+  filter: drop-shadow(0 0 25px rgba(167, 98, 28, 0.9));
 }
 
+.deck-card--1::after {
+  content: "";
+  position: absolute;
+  inset: -25px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 200, 90, 0.45),
+    rgba(255, 140, 0, 0.25),
+    transparent 70%
+  );
+
+  filter: blur(18px);
+  z-index: -1;
+}
 
 /* Hide the icon + "DECK" text on the top card */
 .deck-card--1 > * { display: none; }
 
-/* Animación "dar carta" */
+
+/* Animación "dar carta" — deck queda quieto, solo pulsa */
 .deck-dealing {
-  animation: dealCard 0.25s ease forwards;
-}
-@keyframes dealCard {
-  to { transform: translateX(60px) rotate(5deg) scale(0.88); opacity: 0.35; }
+  animation: deckFloat 3s ease-in-out infinite;
 }
 
 /* ── Carta revelada ──────────────────────────────────────────────────────── */
+/* ── Carta revelada ──────────────────────────────────────────────────────── */
 .card-reveal-slot {
   position: absolute;
-  right: 18%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  pointer-events: none;
 }
 
 .revealed-card {
-  width: 90px;
-  height: 126px;
-  border-radius: var(--radius-card);
+  width: 50px;
+  height: 70px;
+  border-radius: 4px;
   box-shadow:
-    0 0 0 2px var(--gold-dim),
-    0 8px 32px rgba(0,0,0,0.7),
-    0 0 24px rgba(201,168,76,0.4);
-  animation: cardFlip 0.42s var(--ease-bounce) forwards;
-  transform-origin: center bottom;
+    0 0 0 1px var(--gold-dim),
+    0 4px 16px rgba(0,0,0,0.7),
+    0 0 14px rgba(201,168,76,0.4);
+  animation: cardFlip 0.55s var(--ease-bounce) forwards;
+  transform-origin: center center;
 }
+
+
 @keyframes cardFlip {
-  0%   { transform: scale(0.45) rotateY(90deg) translateY(20px); opacity: 0; }
-  60%  { transform: scale(1.1)  rotateY(0deg)  translateY(-7px); }
-  100% { transform: scale(1)    rotateY(0deg)  translateY(0);    opacity: 1; }
+  0%   { transform: translate(0px, 30px) scale(0.6) rotateY(90deg); opacity: 0; }
+  50%  { transform: translate(70px, -50px) scale(1.05) rotateY(0deg); opacity: 1; }
+  100% { transform: translate(90px, -40px) scale(1) rotateY(0deg); opacity: 1; }
 }
 
 /* ── Carta volando al leaderboard ────────────────────────────────────────── */
@@ -399,9 +452,56 @@
 /* ── Botones de acción ───────────────────────────────────────────────────── */
 .actions {
   display: flex;
-  gap: 0.75rem;
+  gap: 7rem;
   justify-content: center;
   padding: 0.5rem 0 0.25rem;
+  margin-top: -1rem;
+}
+
+.image-action-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
+  transition:
+    transform 0.18s ease,
+    filter 0.18s ease;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-action-btn img {
+  height: 72px; /* ajusta según el tamaño real */
+  width: auto;
+  display: block;
+}
+
+.image-action-btn:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.03);
+  filter:
+    drop-shadow(0 0 6px rgba(255,215,120,.5))
+    drop-shadow(0 0 8px rgba(255,180,50,.25));
+}
+
+.image-action-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.image-action-btn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+}
+
+.image-action-btn img {
+  height: 60px;
+
+  filter:
+    drop-shadow(0 0 3px rgba(255,220,120,.25))
+    drop-shadow(0 0 8px rgba(255,180,50,.15));
 }
 
 .action-btn {
@@ -648,6 +748,12 @@
   to   { transform: translateY(0)    scale(1);    opacity: 1; }
 }
 
+.round-summary-modal {
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
 /* ── Modal header ────────────────────────────────────────────────────────── */
 .modal-header {
   display: flex;
@@ -676,6 +782,8 @@
   color: var(--text-muted);
   margin: 0 0 1.25rem;
   line-height: 1.5;
+  max-height: calc(100vh - 40px);
+
 }
 
 /* ── Selección jugadores en modal ────────────────────────────────────────── */
@@ -704,7 +812,35 @@
 /* ── Modal resumen de ronda ──────────────────────────────────────────────── */
 .round-summary-modal .modal-header { justify-content: center; margin-bottom: 1.5rem; }
 
-.summary-list { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 1.5rem; }
+.summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+
+  overflow-y: auto;
+  flex: 1;
+
+  padding-right: 6px;
+  margin-bottom: 1rem;
+}
+
+.summary-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.summary-list::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+  border-radius: 999px;
+}
+
+.summary-list::-webkit-scrollbar-thumb {
+  background: rgba(201,168,76,0.5);
+  border-radius: 999px;
+}
+
+.summary-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(201,168,76,0.8);
+}
 
 .summary-row {
   display: grid;
@@ -737,9 +873,10 @@
   font-family: 'Bebas Neue', sans-serif;
   font-size: 0.95rem;
   letter-spacing: 1px;
-  color: var(--gold-light);
+  color: #58d68d;
   min-width: 55px;
   text-align: right;
+
 }
 
 .continue-btn {
@@ -902,6 +1039,7 @@
     left: 250%;
   }
 }
+
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 800px) {
