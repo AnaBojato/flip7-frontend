@@ -1,6 +1,39 @@
-import { Then, When } from "@cucumber/cucumber";
+import { Given, Then, When } from "@cucumber/cucumber";
 import { expect } from "@playwright/test";
 import type { CucumberWorld } from "../support/world";
+
+// ─── Debug helper ───────────────────────────────────────────────────────
+
+Given("I create a game and navigate to it with debug", async function (this: CucumberWorld) {
+  await this.page.goto(this.baseUrl + "/players", { waitUntil: "domcontentloaded" });
+  await this.page.waitForSelector(".players-page", { timeout: 15000 });
+
+  const inputs = this.page.locator(".player-input");
+  const count = await inputs.count();
+  for (let i = 0; i < count; i++) {
+    await inputs.nth(i).fill(`Player ${i + 1}`);
+  }
+  await this.page.getByText("SET SAIL", { exact: true }).click();
+  await this.page.waitForSelector(".game-page", { timeout: 30000 });
+  await this.page.waitForTimeout(3000);
+
+  // Debug: print current page state
+  const html = await this.page.locator(".game-page").innerHTML().catch(() => "no game-page");
+  console.log("GAME PAGE HTML (truncated):", html.substring(0, 2000));
+
+  const buttons = await this.page.locator("button").allTextContents();
+  console.log("BUTTONS:", JSON.stringify(buttons));
+
+  const deckVisible = await this.page.locator(".deck-stack").isVisible().catch(() => false);
+  const drawBtn = await this.page.locator("button").filter({ hasText: "Draw" }).count();
+  console.log(`Deck visible: ${deckVisible}, Draw buttons: ${drawBtn}`);
+
+  const chip = this.page.locator(".game-id-chip");
+  const chipText = await chip.textContent();
+  if (chipText) {
+    this.gameId = parseInt(chipText.replace("#", ""), 10);
+  }
+});
 
 // ─── Card dealing ───────────────────────────────────────────────────────
 
