@@ -417,7 +417,7 @@
 /* ── Badge de evento ─────────────────────────────────────────────────────── */
 .event-badge {
   position: absolute;
-  top: -14px;
+  top: 90px;
   left: 50%;
   transform: translateX(-50%);
   padding: 0.3rem 1rem;
