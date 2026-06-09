@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "cucumber": "cucumber-js --timeout 30000",
+    "test:e2e": "start-server-and-test 'vite' http://localhost:5173 'cucumber-js --timeout 30000'",
+    "test:coverage": "VITE_COVERAGE=true start-server-and-test 'vite' http://localhost:5173 'cucumber-js --timeout 30000 && nyc report --reporter=text --reporter=lcov --check-coverage --lines 90'",
+    "coverage:report": "nyc report --reporter=text --reporter=lcov --check-coverage --lines 90"
   },
   "dependencies": {
     "lucide-react": "^1.16.0",
@@ -16,17 +20,25 @@
     "react-router-dom": "^7.16.0"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^13.0.0",
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.60.0",
     "@types/node": "^24.12.3",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
+    "c8": "^11.0.0",
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
+    "nyc": "^18.0.0",
+    "playwright": "^1.60.0",
+    "start-server-and-test": "^3.0.8",
+    "tsx": "^4.22.4",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",
-    "vite": "^8.0.12"
+    "vite": "^8.0.12",
+    "vite-plugin-istanbul": "^9.0.1"
   }
 }

@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import MainMenu from "./pages/MainMenu/MainMenu";
 import ManualPage from "./pages/ManualPage/ManualPage";
 import Players from "./pages/Players/Players";
-import GamePage from "./pages/GamePage/GamePage";
+import GamePage from "./pages/GamePage/gamePage";
 import ArchivesPage from "./pages/ArchivesPage/ArchivesPage";
 
 function App() {

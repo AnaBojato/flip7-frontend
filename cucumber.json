@@ -1,0 +1,9 @@
+{
+  "default": {
+    "format": ["progress"],
+    "paths": ["features/"],
+    "requireModule": ["tsx"],
+    "require": ["features/support/*.ts", "features/step_definitions/*.ts"],
+    "publishQuiet": true
+  }
+}
